@@ -47,7 +47,7 @@ const DashboardLayout = ({title, mode, toggleTheme }) => {
     if (localStorage.getItem("token")) {
       getCurrentUser();
     } else {
-      navigate('/signin');
+      navigate('/connexion');
     }
   }, [getCurrentUser, navigate]);
 

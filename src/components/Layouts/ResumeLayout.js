@@ -47,7 +47,7 @@ const ResumeLayout = () => {
     if (localStorage.getItem("token")) {
       getCurrentUser();
     } else {
-      navigate('/signin');
+      navigate('/connexion');
     }
   }, [getCurrentUser, navigate]);
 
