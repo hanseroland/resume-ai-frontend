@@ -17,7 +17,7 @@ import { ToastContainer } from 'react-toastify';
 function App() {
 
   // Utiliser "/nfc" en production et "/" en local
-  const basename = process.env.NODE_ENV === 'production' ? '/ai-resume' : '/';
+  const basename = process.env.PUBLIC_URL || '/';
 
   return (
     <Provider store={store} >

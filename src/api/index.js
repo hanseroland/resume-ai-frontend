@@ -21,6 +21,8 @@ export const axiosInstance = async (method, url, payload) => {
 }  
 
 export const axiosInstanceUploade = async (method, url, payload) => {
+
+    const api_url = process.env.REACT_APP_API_URL || "http://localhost:5000/api/v1";
     try {
         const response = await axios({
             method,
