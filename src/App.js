@@ -21,7 +21,7 @@ function App() {
 
   return (
     <Provider store={store} >
-      <Router basename={basename}>
+      <Router>
         <Routes>
           {/* Section simple (sans Navbar/Dashboard) */}
           <Route element={<SimpleLayout />}>
