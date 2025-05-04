@@ -47,7 +47,7 @@ const SignInPage = () => {
       const response = await GetCurrentUser();
       if (response.success) {
         
-          navigate('/admin');
+          navigate('/connexion');
         
       }
     } catch (error) {
@@ -133,10 +133,16 @@ const SignInPage = () => {
                
               }}
             >
-              Se connecter
+              Se connecter 
             </Button>
             <Typography variant="body2" sx={{ mb: 1, mt: 2 }}>
               ou
+            </Typography>
+            <Typography variant="body2" sx={{ mt: 2 }}>
+              Vous n'avez pas de compte ?{" "}
+              <a href="/inscription" style={{ color: "blue", textDecoration: "none" }}>
+                Inscrivez-vous
+              </a>
             </Typography>
               {/* <Button
               fullWidth
