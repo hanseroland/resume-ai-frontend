@@ -169,7 +169,7 @@ function PersonalDetailForm({enableNext,resumeId}) {
                   as={TextField}
                   fullWidth
                   name="phone"
-                  label="Téléphone"
+                  label="Téléphone avec indicatif sans le +"
                   variant="outlined"
                   onChange={(e) => handleChange(e, setFieldValue)}
                   error={touched.phone && Boolean(errors.phone)}

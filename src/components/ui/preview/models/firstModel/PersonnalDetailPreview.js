@@ -8,7 +8,7 @@ const PersonalDetailPreview = ({resumeData,cvColor}) => {
   if (!resumeData) return null;
 
   return (
-    <Card elevation={0} sx={{maxWidth: 600, mx: "auto" }}>
+    <Card elevation={0} sx={{maxWidth: 800, mx: "auto" }}>
       <CardContent>
         <Grid container spacing={2} alignItems="center">
           {/* User Details */}

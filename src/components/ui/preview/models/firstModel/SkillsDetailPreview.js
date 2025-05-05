@@ -16,7 +16,7 @@ const SkillsDetailPreview = ({ resumeData, cvColor }) => {
   return (
     <Box
       sx={{
-        maxWidth: 600,
+        maxWidth: 800,
         mx: "auto",
         p:2,
       }}
