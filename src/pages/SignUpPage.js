@@ -1,12 +1,13 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { Button, Checkbox, TextField, Typography, Box, IconButton } from "@mui/material";
+import { useCallback, useEffect, useState } from "react";
+import { Button, TextField, Typography, Box, IconButton, Alert, AlertTitle, CircularProgress } from "@mui/material";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import GoogleIcon from "@mui/icons-material/Google";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useNavigate } from "react-router-dom";
 import { RegisterUser } from "../api/auth";
-import { useNavigate } from 'react-router-dom';
+import { useAuth } from "../context/authContext";
 
 
 
@@ -24,38 +25,50 @@ const SignupSchema = Yup.object().shape({
 const SignupPage = () => {
 
   const navigate = useNavigate();
-  const [message, setMessage] = useState('');
+  const { isAuthenticated, loading, currentUser } = useAuth();
+  const [statusMessage, setStatusMessage] = useState(null);
+  const [isSubmittingForm, setIsSubmittingForm] = useState(false);
 
+  const handleRegister = useCallback(async (values) => {
+    setIsSubmittingForm(true);
+    setStatusMessage(null);
 
-
-  const handleRegister = useCallback(async (obj) => {
     try {
 
-      if (obj.password === obj.confirmPassword) {
-        const response = await RegisterUser(obj);
-        if (response.success) {
-            setMessage(response.message);
-            //localStorage.setItem("token", response.token);
-            navigate('/connexion');
+      const response = await RegisterUser(values);
 
-        } else {
-          console.log(response.message)
-        }
+      if (response.success) {
+        setStatusMessage({ type: 'success', text: response.message });
+        // l'utilisateur devra se connecter après l'inscription.
+        navigate('/');
       } else {
-        
-        console.log("Les mots de passe ne correspondent pas");
+        // si la simulation échoue par rejet. Le catch s'en chargera.
+        setStatusMessage({ type: 'error', text: response.message || "Échec de l'inscription." });
       }
     } catch (error) {
-
-        console.log("Erreur lors de l'inscription :", error.message);
+      console.error("Erreur lors de l'inscription :", error);
+      setStatusMessage({ type: 'error', text: error.message || "Une erreur inattendue est survenue lors de l'inscription." });
+    } finally {
+      setIsSubmittingForm(false);
     }
   }, [navigate]);
+
 
   useEffect(() => {
-    if (localStorage.getItem('token')) {
+    if (!loading && isAuthenticated) {
       navigate('/');
     }
-  }, [navigate]);
+  }, [loading, isAuthenticated, currentUser, navigate]);
+
+
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+        <CircularProgress size={60} />
+        <Typography variant="h6" sx={{ ml: 2 }}>Vérification de la session...</Typography>
+      </Box>
+    );
+  }
 
   return (
     <Box
@@ -71,16 +84,23 @@ const SignupPage = () => {
         bgcolor: "background.default",
       }}
     >
-        <Box>
+      <Box>
 
-        </Box>
+      </Box>
       <IconButton href="/" sx={{ mb: 2 }}>
         <ArrowBackIcon />
       </IconButton>
-     
+
       <Typography variant="h4" component="h1" gutterBottom>
         Inscription
       </Typography>
+      {/* Affichage des messages de statut */}
+      {statusMessage && (
+        <Alert severity={statusMessage.type} sx={{ mb: 2 }}>
+          <AlertTitle>{statusMessage.type === 'success' ? 'Succès' : 'Erreur'}</AlertTitle>
+          {statusMessage.text}
+        </Alert>
+      )}
       <Formik
         initialValues={{
           name: "",
@@ -135,7 +155,7 @@ const SignupPage = () => {
                 helperText={touched.confirmPassword && errors.confirmPassword}
               />
             </Box>
-          
+
             <Button
               type="submit"
               fullWidth
@@ -147,8 +167,8 @@ const SignupPage = () => {
                 padding: { xs: "4px 8px", md: "4px 8px", sm: "4px 8px" },
                 borderRadius: "8px",
                 textTransform: "none",
-                fontSize:{xs:'12px',md:'16px',sm:'16px'},
-                
+                fontSize: { xs: '12px', md: '16px', sm: '16px' },
+
               }}
             >
               Créer un compte

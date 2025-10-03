@@ -1,4 +1,3 @@
-import React from "react";
 import { Box, Typography, Divider, Stack } from "@mui/material";
 import SchoolIcon from "@mui/icons-material/School";
 import Grid from '@mui/material/Grid2';
@@ -34,22 +33,17 @@ const EducationDetailPreview = ({ resumeData, cvColor }) => {
       {/* Liste des parcours éducatifs */}
       {resumeData?.educations && resumeData?.educations.length > 0 ? (
         resumeData?.educations.map((edu, index) => (
-          <Box key={index} mb={4}>
+          <Box key={index} mb={2}>
             <Grid container spacing={2}>
-              <Grid size={{xs:12,sm:10}}>
-                {/* Icône ou logo */}
-                <SchoolIcon
-                  sx={{
-                    fontSize: 20,
-                    color: "#000",
-                  }}
-                />
-              </Grid>
-              <Grid size={{xs:12, sm:10}}>
+              <Grid size={{ xs: 12, sm: 10 }}>
                 <Stack spacing={1}>
-                  <Typography variant="h6" fontWeight="bold" fontSize={15}>
-                    {edu.degree || "Diplôme non spécifié"}
-                  </Typography>
+                  <Box display="flex" flexDirection="row" alignItems="center" gap={1} >
+                    <SchoolIcon sx={{ fontSize: 20, color: "#000" }} />
+                    <Typography variant="h6" fontWeight="bold" fontSize={15}>
+                      {edu.degree || "Diplôme non spécifié"}
+                    </Typography>
+                  </Box>
+
                   <Typography variant="body1" color="textSecondary" fontSize={12}>
                     {edu.schoolName || "Établissement non spécifié"} |{" "}
                     {edu.city && edu.country
@@ -59,11 +53,10 @@ const EducationDetailPreview = ({ resumeData, cvColor }) => {
                   <Typography variant="body2" color="textSecondary" fontSize={12}>
                     {`De ${new Date(edu.startDate).toLocaleDateString(
                       "fr-FR"
-                    )} à ${
-                      edu.endDate
-                        ? new Date(edu.endDate).toLocaleDateString("fr-FR")
-                        : "Aujourd'hui"
-                    }`}
+                    )} à ${edu.endDate
+                      ? new Date(edu.endDate).toLocaleDateString("fr-FR")
+                      : "Aujourd'hui"
+                      }`}
                   </Typography>
                 </Stack>
               </Grid>

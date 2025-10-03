@@ -1,44 +1,41 @@
+//src/api/index.js
 import axios from "axios";
+
+//const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+
+const API_BASE_URL = "http://localhost:5000";
 
 
 export const axiosInstance = async (method, url, payload) => {
-
-    const api_url = 'https://resume-ai-41ei.onrender.com/api/v1' || "http://localhost:5000/api/v1";
-    try {
-         const response = await axios({
-            method,
-            url: `${api_url}${url}`,
-            data: payload,
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`
-            }
-          },
-        ); 
-        return response.data 
-    } catch (error) {
-        return error;
-    }
-}  
-
-export const axiosInstanceUploade = async (method, url, payload) => {
-
-    const api_url = 'https://resume-ai-41ei.onrender.com/api/v1' || "http://localhost:5000/api/v1";
     try {
         const response = await axios({
             method,
-            url: `${api_url}${url}`,
+            url: `${API_BASE_URL}/api/v1${url}`,
+            data: payload,
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Erreur axiosInstance :", error.response?.data || error.message);
+        return error.response ? error.response.data : { success: false, message: error.message };
+    }
+};
+
+// Pour upload
+export const axiosInstanceUploade = async (method, url, payload) => {
+    try {
+        const response = await axios({
+            method,
+            url: `${API_BASE_URL}/api/v1${url}`,
             data: payload,
             headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`,
                 "Content-Type": "multipart/form-data",
-            }
-
-        },
-
-
-        );
-        return response.data
+            },
+            withCredentials: true,
+        });
+        return response.data;
     } catch (error) {
-        return error;
+        console.error("Erreur axiosInstanceUpload :", error.response?.data || error.message);
+        return error.response ? error.response.data : { success: false, message: error.message };
     }
-} 
+};

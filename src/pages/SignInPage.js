@@ -1,11 +1,10 @@
-import React, { useCallback, useEffect } from "react";
-import { Button, TextField, Typography, Box, IconButton } from "@mui/material";
+import { useCallback, useEffect, useState } from "react";
+import { Button, TextField, Typography, Box, IconButton, CircularProgress, Alert } from "@mui/material";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from 'react-router-dom';
-import { LoginUser } from "../api/auth";
-import { GetCurrentUser } from "../api/users";
+import { useAuth } from "../context/authContext";
 
 
 // Schéma de validation pour la connexion
@@ -17,51 +16,51 @@ const LoginSchema = Yup.object().shape({
 const SignInPage = () => {
 
   const navigate = useNavigate();
+  const { login, isAuthenticated, currentUser, loading } = useAuth();
+  const [loginError, setLoginError] = useState(null);
+  const [isAuthenticating, setIsAuthenticating] = useState(false); // Pour le spinner global
 
 
-  const handleSignin = useCallback(async (values) => { 
+
+  const handleSignin = useCallback(async (values) => {
+    setIsAuthenticating(true);
+    setLoginError(null);
+
     try {
-      const response = await LoginUser(values); 
-      if (response.success) {
-       
-          //console.log("login res =",response)
-          localStorage.setItem('token', response.token);
-          //console.log("login token = ",localStorage.getItem('token'))
-
-          //getCurrentUser()
-          navigate('/');
-       
+      const userData = await login(values); // ✅ Attend la réponse de la fonction login
+      if (userData) { // Si la connexion a réussi
+        navigate('/');
       } else {
-        throw new Error(response.message);
+        // Gérer le cas où la fonction login ne renvoie pas d'erreur mais ne renvoie pas non plus de données
+        setLoginError("Échec de la connexion.");
       }
     } catch (error) {
-      throw new Error(error.message);
+      setLoginError(error.message || "Échec de la connexion");
+    } finally {
+      setIsAuthenticating(false);
     }
-  }, [navigate]);
+  }, [login, navigate]);
 
 
-
-
-  const getCurrentUser = useCallback(async () => {
-    try {
-      const response = await GetCurrentUser();
-      if (response.success) {
-        
-          navigate('/connexion');
-        
-      }
-    } catch (error) {
-      console.error(error.message);
-    }
-  }, [navigate]);
-
+  // ✅ useEffect pour rediriger si déjà connecté (le contexte gère l'état d'authentification)
   useEffect(() => {
-    //console.log(localStorage.getItem('token'))
-    if (localStorage.getItem('token')) {
-      getCurrentUser();
+    if (!loading && isAuthenticated) {
+      // Si déjà authentifié, redirige vers le tableau de bord
+      navigate('/');
     }
-  }, [getCurrentUser]);
- 
+  }, [loading, isAuthenticated, currentUser, navigate]);
+
+
+  // ✅ Afficher un spinner si le contexte est en cours de chargement initial
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+        <CircularProgress size={60} />
+        <Typography variant="h6" sx={{ ml: 2 }}>Vérification de la session...</Typography>
+      </Box>
+    );
+  }
+
 
   return (
     <Box
@@ -81,10 +80,17 @@ const SignInPage = () => {
         <ArrowBackIcon />
       </IconButton>
       {/* Bouton pour changer de thème */}
-     
+
       <Typography variant="h4" component="h1" gutterBottom>
         Connexion
       </Typography>
+      {/* Affichage des messages d'erreur */}
+      {loginError && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {loginError}
+        </Alert>
+      )}
+
       <Formik
         initialValues={{
           email: "",
@@ -123,17 +129,17 @@ const SignInPage = () => {
               color="primary"
               disabled={isSubmitting}
               sx={{
-               
+
                 color: "text.primary",
                 fontWeight: "bold",
                 padding: { xs: "4px 8px", md: "4px 8px", sm: "4px 8px" },
                 borderRadius: "8px",
                 textTransform: "none",
                 fontSize: { xs: "12px", md: "16px", sm: "16px" },
-               
+
               }}
             >
-              Se connecter 
+              Se connecter
             </Button>
             <Typography variant="body2" sx={{ mb: 1, mt: 2 }}>
               ou
@@ -144,7 +150,7 @@ const SignInPage = () => {
                 Inscrivez-vous
               </a>
             </Typography>
-              {/* <Button
+            {/* <Button
               fullWidth
               variant="outlined"
               startIcon={<GoogleIcon />}

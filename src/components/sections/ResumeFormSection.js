@@ -26,33 +26,50 @@ const formComponents = {
   LanguageForm
 };
 
-function ResumeFormSection({resumeId}) {
+function ResumeFormSection({ resumeId }) {
 
-   const [activeFormIndex, setActiveFormIndex] = useState(1)
+  const [activeFormIndex, setActiveFormIndex] = useState(1)
+  const [enableNext, setEnableNext] = useState(false)
+  const { sections } = useFormSections();
 
-   const [enableNext,setEnableNext] = useState(false)
-
-   const { sections } = useFormSections();
+  const activeFormName = sections[activeFormIndex - 1];
+  const FormComponent = formComponents[activeFormName];
 
 
   return (
     <Box>
-        {/**Head */}
-        <FormSectionHeader
-          activeFormIndex={activeFormIndex}
-          setActiveFormIndex={setActiveFormIndex}
-          enableNext={enableNext}
-        />
-        <FormStepper activeFormIndex={activeFormIndex} />
+      {/**Head */}
+      <FormSectionHeader
+        activeFormIndex={activeFormIndex}
+        setActiveFormIndex={setActiveFormIndex}
+        enableNext={enableNext}
+      />
+      <FormStepper activeFormIndex={activeFormIndex} />
 
-        {sections.map((section, index) => {
-        const FormComponent = formComponents[section];
+      {
+        FormComponent && (
+          <Box
+            sx={{
+              maxHeight: "70vh",   // tu peux ajuster la hauteur (vh = % de la hauteur de l'écran)
+              overflowY: "auto",
+              overflowX: "hidden",
+              p: 1,
+            }}
+          >
+            <FormComponent resumeId={resumeId} enableNext={(v) => setEnableNext(v)} />
+          </Box>
+        )
+      }
+
+      {/*sections.map((section, index) => {
+        const FormComponent = formComponents[section]; 
+        
         return (
           <Box key={index} sx={{ display: activeFormIndex === index + 1 ? 'block' : 'none' }}>
             <FormComponent resumeId={resumeId} enableNext={(v) => setEnableNext(v)} />
           </Box>
         );
-      })}
+        })*/}
 
     </Box>
   )

@@ -12,6 +12,9 @@ import SignInPage from './pages/SignInPage';
 import SimpleLayout from './components/Layouts/SimpleLayout';
 import EditResume from './pages/EditResume';
 import { ToastContainer } from 'react-toastify';
+import { AuthProvider, useAuth } from './context/authContext';
+import { Box, CircularProgress, Typography } from '@mui/material';
+import ResumeView from './pages/ResumeView';
 
 
 function App() {
@@ -19,27 +22,35 @@ function App() {
   // Utiliser "/nfc" en production et "/" en local
   const basename = process.env.PUBLIC_URL || '/';
 
+
   return (
+
     <Provider store={store} >
       <Router>
-        <Routes>
-          {/* Section simple (sans Navbar/Dashboard) */}
-          <Route element={<SimpleLayout />}>
-            <Route path="/inscription" element={<SignupPage />} />
-            <Route path="/connexion" element={<SignInPage />} />
-            <Route path="*" element={<NotFoundPage />} />
-          </Route>
-          {/* Section Admin */}
-          <Route element={<ResumeLayout />}>
-            <Route index element={<Home />} />
-            <Route path="/resumes" element={<Resumes />} />
-            <Route path="/resumes/:resumeId/edit" element={<EditResume />} />
-            <Route path="/profile" element={<Profile />} />
-          </Route>
-        </Routes>
+        <AuthProvider>
+          <Routes>
+
+            {/* Section simple (sans Navbar/Dashboard) */}
+            <Route element={<SimpleLayout />}>
+              <Route path="/inscription" element={<SignupPage />} />
+              <Route path="/connexion" element={<SignInPage />} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Route>
+            {/* Section Admin */}
+            <Route element={<ResumeLayout />}>
+              <Route index element={<Home />} />
+              <Route path="/resumes" element={<Resumes />} />
+              <Route path="/resumes/:resumeId/edit" element={<EditResume />} />
+              <Route path="/my-resume/:resumeId/view" element={<ResumeView />} />
+              <Route path="/profile" element={<Profile />} />
+            </Route>
+
+          </Routes>
+        </AuthProvider>
       </Router>
-      <ToastContainer/>
+      <ToastContainer />
     </Provider>
+
 
 
   );

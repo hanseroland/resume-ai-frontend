@@ -3,19 +3,21 @@ import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { Box, Button, TextField } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { CreateResume } from '../../api/resumes';
 import { SetCurrentResume } from '../../redux/slices/resumeSlice';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/authContext';
 
 
 const ResumeNameForm = ({ setOpenDialog, setResumeCreated, setRefreshTrigger }) => {
 
-  const { currentUser } = useSelector(state => state.users);
+  const { currentUser } = useAuth();
   const dispatch = useDispatch();
   const navigate = useNavigate()
 
 
+  //console.log("first current user", currentUser)
   const validationSchema = Yup.object().shape({
     title: Yup.string().required('Le titre du CV est obligatoire').trim(),
   });
@@ -58,7 +60,7 @@ const ResumeNameForm = ({ setOpenDialog, setResumeCreated, setRefreshTrigger }) 
       <Formik
         initialValues={{
           title: '',
-          userId: currentUser._id
+          userId: currentUser ? currentUser._id : '',
 
         }}
         validationSchema={validationSchema}

@@ -14,6 +14,7 @@ import { Link } from 'react-router-dom';
 import { Logout } from '@mui/icons-material';
 import { Avatar, Box } from '@mui/material';
 import { useLocation } from 'react-router-dom';
+import { useAuth } from '../../context/authContext';
 
 
 
@@ -65,12 +66,12 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   })
 );
 
-const Sidebar = ({ open, handleDrawerClose, links}) => {
+const Sidebar = ({ open, handleDrawerClose, links }) => {
 
   const location = useLocation();
- 
-
   const theme = useTheme();
+  const { logout } = useAuth();
+
 
   return (
     <Drawer variant="permanent" open={open}>
@@ -118,36 +119,37 @@ const Sidebar = ({ open, handleDrawerClose, links}) => {
       </List>
       <Divider />
       <List>
-          <ListItem disablePadding sx={{ display: 'block' }}>
-            <ListItemButton
-              
+        <ListItem disablePadding sx={{ display: 'block' }}>
+          <ListItemButton
+
+            sx={{
+              minHeight: 48,
+              justifyContent: open ? 'initial' : 'center',
+              px: 2.5,
+            }}
+            onClick={logout}
+          >
+            <ListItemIcon
               sx={{
-                minHeight: 48,
-                justifyContent: open ? 'initial' : 'center',
-                px: 2.5,
+                minWidth: 0,
+                mr: open ? 3 : 'auto',
+                justifyContent: 'center',
               }}
             >
-              <ListItemIcon
-                sx={{
-                  minWidth: 0,
-                  mr: open ? 3 : 'auto',
-                  justifyContent: 'center',
-                }}
-              >
-                <Logout/>
-              </ListItemIcon>
-              <ListItemText
-               primary="Déconnexion"
-                sx={{ opacity: open ? 1 : 0 }}
-              />
-            </ListItemButton>
-          </ListItem>
-          <Box
-            display="flex"
-            justifyContent="center"
-          >
-             <Avatar alt="avatar" sx={{width:45,height:45}}>H</Avatar>
-          </Box>
+              <Logout />
+            </ListItemIcon>
+            <ListItemText
+              primary="Déconnexion"
+              sx={{ opacity: open ? 1 : 0 }}
+            />
+          </ListItemButton>
+        </ListItem>
+        <Box
+          display="flex"
+          justifyContent="center"
+        >
+          <Avatar alt="avatar" sx={{ width: 45, height: 45 }}>H</Avatar>
+        </Box>
       </List>
     </Drawer>
   );

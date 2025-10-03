@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Box, CircularProgress } from "@mui/material";
 import { useParams } from "react-router-dom";
 import ResumeFormSectionWrapper from "../components/sections/ResumeFormSection";
@@ -12,8 +12,8 @@ import Grid from '@mui/material/Grid2';
 function EditResume() {
   const params = useParams();
   const [resumeData, setResumeData] = useState();
-  const [loading, setLoading] = useState(true); // Indique si les données sont en cours de chargement
-  const [cvColor, setCvColor] = useState("#000"); // Couleur par défaut
+  const [loading, setLoading] = useState(true);
+  const [cvColor, setCvColor] = useState("#000");
 
   // Fonction pour récupérer le CV
   const fetchCurrentResume = async () => {
@@ -23,7 +23,7 @@ function EditResume() {
     } catch (err) {
       console.error('Erreur lors de la récupération du CV :', err);
     } finally {
-      setLoading(false); // Indique que le chargement est terminé
+      setLoading(false);
     }
   };
 
@@ -34,7 +34,7 @@ function EditResume() {
     } else {
       setLoading(false);
     }
-  }, []); // Relance la récupération du CV
+  }, []);
 
   return (
     <ResumeStyleContext.Provider value={{ cvColor, setCvColor }}>
@@ -42,7 +42,7 @@ function EditResume() {
         <Box py={1} px={1}>
           <Grid container spacing={2}>
             {/* Formulaire */}
-            <Grid size={{xs:12, sm:6}}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <Box
                 sx={{
                   border: "1px solid #e0e0e0",
@@ -63,15 +63,15 @@ function EditResume() {
             </Grid>
 
             {/* Aperçu avec barre de défilement */}
-            <Grid size={{xs:12, sm:6}}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <Box
                 sx={{
-                  maxHeight: "calc(100vh - 64px)", // Ajuste la hauteur maximale à la taille de la fenêtre
-                  overflowY: "auto", // Barre de défilement verticale si le contenu dépasse
+                  maxHeight: "calc(100vh - 64px)", //
+                  overflowY: "auto",
                   border: "1px solid #e0e0e0",
                   borderRadius: "8px",
                   boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-                  p: 2, // Padding interne pour éviter que le contenu touche les bords
+                  p: 2,
                   backgroundColor: "#ffffff",
                 }}
               >

@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { Card, CardHeader, CardContent, CardActions, Typography, Button, IconButton, Box } from '@mui/material';
+import { Card, CardHeader, CardContent, Typography, IconButton, Box, Menu, MenuItem, ListItemIcon } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { Delete, Share, Article, Edit } from '@mui/icons-material';
+import { Delete, Share, Article, Edit, MoreVertOutlined } from '@mui/icons-material';
 import ConfirmDialog from '../dialogs/ConfirmDialog';
 
 export default function ResumeCard({ resume, removeResume }) {
 
   const [openDialog, setOpenDialog] = useState(false);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
 
   const handleOpenDialog = () => {
     setOpenDialog(true);
@@ -22,12 +24,22 @@ export default function ResumeCard({ resume, removeResume }) {
   };
 
 
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+
 
   return (
     <Card
-      elevation={10}
+      elevation={2}
       sx={{
         maxWidth: 380,
+        height: 270,
         borderRadius: 4,
         overflow: 'hidden',
         background: 'rgba(255, 255, 255, 0.8)',
@@ -52,9 +64,61 @@ export default function ResumeCard({ resume, removeResume }) {
           </Typography>
         }
         action={
-          <IconButton onClick={handleOpenDialog}>
-            <Delete sx={{ color: '#ff4d4d' }} />
-          </IconButton>
+          <div>
+            <IconButton
+              aria-label="more"
+              id="long-button"
+              aria-controls={open ? 'long-menu' : undefined}
+              aria-expanded={open ? 'true' : undefined}
+              aria-haspopup="true"
+              onClick={handleClick}
+            //onClick={handleOpenDialog}
+            >
+              {/*<Delete sx={{ color: '#ff4d4d' }} />*/}
+              <MoreVertOutlined />
+            </IconButton>
+            <Menu
+              id="long-menu"
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
+            >
+              <MenuItem
+                onClick={handleClose}
+              >
+                <Link
+                  to={`/resumes/${resume._id}/edit`}
+                  style={{
+                    textDecoration: 'none',
+                    color: 'inherit',
+                    display: 'flex',
+                    alignItems: 'center',
+                    width: '100%',
+                  }}
+                >
+                  <ListItemIcon>
+                    <Edit fontSize="small" />
+                  </ListItemIcon>
+                  <Typography variant="inherit">Editer</Typography>
+                </Link>
+              </MenuItem>
+
+              <MenuItem onClick={handleOpenDialog}>
+                <ListItemIcon>
+                  <Delete color="error" fontSize="small" />
+                </ListItemIcon>
+                <Typography variant="inherit">Supprimer</Typography>
+              </MenuItem>
+
+              <MenuItem>
+                <ListItemIcon>
+                  <Share fontSize="small" />
+                </ListItemIcon>
+                <Typography variant="inherit">Partager</Typography>
+              </MenuItem>
+            </Menu>
+          </div>
+
         }
         sx={{
           backgroundColor: 'rgba(255, 255, 255, 0.6)',
@@ -86,7 +150,7 @@ export default function ResumeCard({ resume, removeResume }) {
         </Box>
       </CardContent>
 
-      <CardActions
+      {/*<CardActions
         sx={{
           display: 'flex',
           justifyContent: 'space-between',
@@ -117,10 +181,10 @@ export default function ResumeCard({ resume, removeResume }) {
         >
           <Share />
         </IconButton>
-      </CardActions>
+      </CardActions>*/}
 
-       {/* Dialog de confirmation de suppression */}
-       <ConfirmDialog
+      {/* Dialog de confirmation de suppression */}
+      <ConfirmDialog
         open={openDialog}
         onClose={handleCloseDialog}
         onConfirm={handleConfirmDelete}
