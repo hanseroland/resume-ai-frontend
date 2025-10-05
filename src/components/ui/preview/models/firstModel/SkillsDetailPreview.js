@@ -18,7 +18,7 @@ const SkillsDetailPreview = ({ resumeData, cvColor }) => {
       sx={{
         maxWidth: 800,
         mx: "auto",
-        p:2,
+        p: 2,
       }}
     >
       {/* Titre de la section */}
@@ -38,10 +38,10 @@ const SkillsDetailPreview = ({ resumeData, cvColor }) => {
       </Typography>
 
       {/* Liste des compétences */}
-      <Grid container spacing={2}>
+      <Grid container spacing={1}>
         {resumeData?.skills && resumeData?.skills.length > 0 ? (
           resumeData?.skills.map((skill, index) => (
-            <Grid  size={{xs:6, sm:3}} key={index}>
+            <Grid size={{ xs: 3, sm: 2, lg: 2, md: 2 }} key={index}>
               <Chip
                 label={skill?.name}
                 icon={<>{renderStars(skill?.level)}</>}

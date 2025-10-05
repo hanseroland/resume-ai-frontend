@@ -74,7 +74,7 @@ const Sidebar = ({ open, handleDrawerClose, links }) => {
 
 
   return (
-    <Drawer variant="permanent" open={open}>
+    <Drawer id='side-bar' variant="permanent" open={open}>
       <DrawerHeader>
         <IconButton onClick={handleDrawerClose}>
           {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}

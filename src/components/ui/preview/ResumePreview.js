@@ -14,12 +14,17 @@ import LanguageDetailPreview from './models/firstModel/LanguageDetailPreview'
 function ResumePreview() {
 
   const { resumeData } = useContext(ResumeInfoContext)
-  const { cvColor } = useContext(ResumeStyleContext); // Récupérer la couleur
+  const { cvColor } = useContext(ResumeStyleContext);
 
 
   //console.log("context",resumeData)
   return (
-    <Box>
+    <Box
+      sx={{
+        width: '100%',
+
+      }}
+    >
       {/**Infos personnelles */}
       <PersonnalDetailPreview cvColor={cvColor} resumeData={resumeData} />
       {/**Résumé */}

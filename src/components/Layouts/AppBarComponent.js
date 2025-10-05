@@ -28,7 +28,7 @@ const AppBarComponent = ({ open, drawerWidth, handleDrawerOpen }) => (
 
 
 
- <AppBar position="fixed" open={open} drawerWidth={drawerWidth}>
+  <AppBar id='app-bar' position="fixed" open={open} drawerWidth={drawerWidth}>
     <Toolbar>
       <IconButton
         color="inherit"
@@ -42,7 +42,7 @@ const AppBarComponent = ({ open, drawerWidth, handleDrawerOpen }) => (
       >
         <MenuIcon />
       </IconButton>
-      
+
       {/* Titre du tableau de bord */}
       <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
         Resume AI

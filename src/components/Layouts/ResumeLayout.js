@@ -89,7 +89,18 @@ const ResumeLayout = () => {
         links={links}
 
       />
-      <Box component="main" sx={{ flexGrow: 0.5, p: 2 }}>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 0.5,
+          p: 2,
+          minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
         <Toolbar />
         <Outlet />
       </Box>

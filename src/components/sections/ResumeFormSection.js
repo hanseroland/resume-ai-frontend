@@ -23,7 +23,8 @@ const formComponents = {
   ProjectForm,
   CertificationForm,
   HobbyForm,
-  LanguageForm
+  LanguageForm,
+
 };
 
 function ResumeFormSection({ resumeId }) {
@@ -31,6 +32,7 @@ function ResumeFormSection({ resumeId }) {
   const [activeFormIndex, setActiveFormIndex] = useState(1)
   const [enableNext, setEnableNext] = useState(false)
   const { sections } = useFormSections();
+
 
   const activeFormName = sections[activeFormIndex - 1];
   const FormComponent = formComponents[activeFormName];
@@ -43,6 +45,7 @@ function ResumeFormSection({ resumeId }) {
         activeFormIndex={activeFormIndex}
         setActiveFormIndex={setActiveFormIndex}
         enableNext={enableNext}
+        resumeId={resumeId}
       />
       <FormStepper activeFormIndex={activeFormIndex} />
 
@@ -50,7 +53,7 @@ function ResumeFormSection({ resumeId }) {
         FormComponent && (
           <Box
             sx={{
-              maxHeight: "70vh",   // tu peux ajuster la hauteur (vh = % de la hauteur de l'écran)
+              maxHeight: "70vh",
               overflowY: "auto",
               overflowX: "hidden",
               p: 1,

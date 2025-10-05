@@ -99,7 +99,7 @@ export default function ResumeCard({ resume, removeResume }) {
                   <ListItemIcon>
                     <Edit fontSize="small" />
                   </ListItemIcon>
-                  <Typography variant="inherit">Editer</Typography>
+                  <Typography variant="inherit">Edit</Typography>
                 </Link>
               </MenuItem>
 
@@ -107,14 +107,14 @@ export default function ResumeCard({ resume, removeResume }) {
                 <ListItemIcon>
                   <Delete color="error" fontSize="small" />
                 </ListItemIcon>
-                <Typography variant="inherit">Supprimer</Typography>
+                <Typography variant="inherit">Delete</Typography>
               </MenuItem>
 
               <MenuItem>
                 <ListItemIcon>
                   <Share fontSize="small" />
                 </ListItemIcon>
-                <Typography variant="inherit">Partager</Typography>
+                <Typography variant="inherit">Share</Typography>
               </MenuItem>
             </Menu>
           </div>

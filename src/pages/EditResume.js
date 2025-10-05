@@ -42,7 +42,7 @@ function EditResume() {
         <Box py={1} px={1}>
           <Grid container spacing={2}>
             {/* Formulaire */}
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={{ xs: 12, sm: 8 }}>
               <Box
                 sx={{
                   border: "1px solid #e0e0e0",
@@ -62,8 +62,8 @@ function EditResume() {
               </Box>
             </Grid>
 
-            {/* Aperçu avec barre de défilement */}
-            <Grid size={{ xs: 12, sm: 6 }}>
+            {/* Aperçu du CV */}
+            <Grid size={{ xs: 12, sm: 4 }}>
               <Box
                 sx={{
                   maxHeight: "calc(100vh - 64px)", //

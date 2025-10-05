@@ -1,15 +1,23 @@
-import React, { useContext, useState } from 'react';
+import { useContext, useState } from 'react';
 import { Box, Button, IconButton, Tooltip, Popover } from '@mui/material';
 import { Apps, ArrowLeft, ArrowRight, Palette, Close } from '@mui/icons-material';
 import { ResumeStyleContext } from '../../../context/ResumeStyleContext';
 import SectionManager from './SectionManager';
+import { useNavigate } from 'react-router-dom';
+import { useFormSections } from '../../../context/FormSectionsProvider';
 
 const colors = ['#000', '#4CAF50', '#FFEB3B', '#F44336', '#2196F3', '#9C27B0', '#E91E63', '#795548'];
 
-const FormSectionHeader = ({ activeFormIndex, setActiveFormIndex, enableNext }) => {
+const FormSectionHeader = ({ activeFormIndex, setActiveFormIndex, enableNext, resumeId }) => {
+
+
   // Gérer les couleurs
   const [colorAnchorEl, setColorAnchorEl] = useState(null);
-  const { setCvColor } = useContext(ResumeStyleContext); // Utilisation du contexte
+  const { setCvColor } = useContext(ResumeStyleContext);
+
+  const navigate = useNavigate();
+  const { sections } = useFormSections();
+
 
   // Gérer le menu des couleurs
   const handleOpenColorMenu = (event) => {
@@ -20,10 +28,12 @@ const FormSectionHeader = ({ activeFormIndex, setActiveFormIndex, enableNext }) 
     setColorAnchorEl(null);
   };
 
+
+
   return (
     <Box
       sx={{
-        maxWidth: 800,
+        width: "90%",
         mx: 'auto',
         p: 2,
         mb: 2,
@@ -58,9 +68,10 @@ const FormSectionHeader = ({ activeFormIndex, setActiveFormIndex, enableNext }) 
             Couleurs
           </Button>
         </Tooltip>
+        <SectionManager />
       </Box>
 
-      <SectionManager />
+
 
       <Popover
         anchorEl={colorAnchorEl}
@@ -131,6 +142,7 @@ const FormSectionHeader = ({ activeFormIndex, setActiveFormIndex, enableNext }) 
           </Tooltip>
         )}
 
+
         <Tooltip title="Suivant">
           <Button
             variant="contained"
@@ -143,6 +155,22 @@ const FormSectionHeader = ({ activeFormIndex, setActiveFormIndex, enableNext }) 
             Suivant
           </Button>
         </Tooltip>
+
+        {activeFormIndex === sections.length && (
+          <Tooltip title="Voir le CV">
+            <Button
+              variant="contained"
+              color="success"
+              size="small"
+              sx={{ textTransform: 'none' }}
+              disabled={!enableNext}
+              onClick={() => navigate(`/my-resume/${resumeId}/view`)}
+            >
+              Voir le CV
+            </Button>
+          </Tooltip>
+        )}
+
       </Box>
     </Box>
   );

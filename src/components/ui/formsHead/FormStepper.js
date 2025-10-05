@@ -1,8 +1,8 @@
-import React from 'react';
 import { Box, Stepper, Step, StepLabel } from '@mui/material';
 import { useFormSections } from '../../../context/FormSectionsProvider';
 
 const FormStepper = ({ activeFormIndex }) => {
+
   const { sections } = useFormSections();
 
   // Fonction pour retirer le suffixe "Form" des labels
@@ -24,10 +24,10 @@ const FormStepper = ({ activeFormIndex }) => {
         alternativeLabel
         sx={{
           '& .MuiStep-root': {
-            padding: '0 4px', // Réduit l'espace entre les Steps
+            padding: '0 4px',
           },
           '& .MuiStepLabel-label': {
-            fontSize: '12px', // Définit la taille des StepLabel à 12px
+            fontSize: '12px',
           },
         }}
       >

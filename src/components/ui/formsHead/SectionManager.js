@@ -19,6 +19,7 @@ const additionalSections = [
 ];
 
 const SectionManager = () => {
+
   const { sections, addSection, removeSection } = useFormSections();
   const [anchorEl, setAnchorEl] = useState(null);
 
