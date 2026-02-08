@@ -20,7 +20,7 @@ export const GetUserResumes = async (userId) => {
 
 //créer un cv par le titre
 export const CreateResume = async (values) => {
-    const response = await axiosInstance("post", "/resumes/create",values);
+    const response = await axiosInstance("post", "/resumes/create", values);
     return response;
 };
 
@@ -32,75 +32,112 @@ export const DeleteResume = async (resumeId) => {
 
 //modifier les info personnelles
 export const UpdatePersonalInfo = async (resumeId, values) => {
-    const response = await axiosInstance("put", `/resumes/update-personal-info/${resumeId}`,values);
+    const response = await axiosInstance("put", `/resumes/update-personal-info/${resumeId}`, values);
     return response;
 };
 
 //modifier le résumé du profil
 export const UpdateSummaryInfo = async (resumeId, values) => {
-    const response = await axiosInstance("put", `/resumes/update-summary-info/${resumeId}`,values);
+    const response = await axiosInstance("put", `/resumes/update-summary-info/${resumeId}`, values);
     return response;
 };
 
-// Générer du text du CV via l'IAUpdateLanguages
+
+/*************************** */
+/*Routes avec l'API de OpenAI*
+/
+/***************************/
+
+// Générer du text du CV via OPENAI
 export const GenerateText = async (prompt) => {
-    const response = await axiosInstance("post", `/reUpdateLanguagessumes/generate-text`, { prompt });
+    const response = await axiosInstance("post", `/resumes/openai-generate-text`, { prompt });
     return response;
 };
 
-// Générer du text du CV via l'IA
+// Générer du text du CV via OPENAI
 export const GenerateThreeText = async (prompt) => {
-    const response = await axiosInstance("post", `/resumes/generate-three-textes`, { prompt });
+    const response = await axiosInstance("post", `/resumes/openai-generate-three-textes`, { prompt });
     return response;
 };
 
 
-// Générer une Expérience du CV via l'IA
+// Générer une Expérience du CV via OPENAI
 export const GenerateExperienceList = async (prompt) => {
-    const response = await axiosInstance("post", `/resumes/generate-experience-list`, { prompt });
+    const response = await axiosInstance("post", `/resumes/openai-generate-experience-list`, { prompt });
     return response;
 };
+
+/** FIN API de OPENAI ******/
+
+
+/*************************** */
+/*Routes avec l'API de GEMINI*
+/
+/***************************/
+
+// Générer du text du CV via GEMINI
+export const GenerateGeminiText = async (prompt) => {
+    const response = await axiosInstance("post", `/resumes/gemini-generate-text`, { prompt });
+    return response;
+};
+
+// Générer du text du CV via GEMINI
+export const GenerateThreeGeminiText = async (prompt) => {
+    const response = await axiosInstance("post", `/resumes/gemini-generate-three-textes`, { prompt });
+    return response;
+};
+
+
+// Générer une Expérience du CV via GEMINI
+export const GenerateGeminiExperienceList = async (prompt) => {
+    const response = await axiosInstance("post", `/resumes/gemini-generate-experience-list`, { prompt });
+    return response;
+};
+
+/** FIN API de GEMINI ******/
+
+
 
 //modifier les expériences
 export const UpdateExperiences = async (resumeId, values) => {
-    const response = await axiosInstance("put", `/resumes/update-experiences-info/${resumeId}`,values);
+    const response = await axiosInstance("put", `/resumes/update-experiences-info/${resumeId}`, values);
     return response;
 };
 
 //modifier les educations
 export const UpdateEducations = async (resumeId, values) => {
-    const response = await axiosInstance("put", `/resumes/update-educations-info/${resumeId}`,values);
+    const response = await axiosInstance("put", `/resumes/update-educations-info/${resumeId}`, values);
     return response;
 };
 
 //modifier les compétences
 export const UpdateSkills = async (resumeId, values) => {
-    const response = await axiosInstance("put", `/resumes/update-skills-info/${resumeId}`,values);
+    const response = await axiosInstance("put", `/resumes/update-skills-info/${resumeId}`, values);
     return response;
 };
 
 
 //modifier les projets
 export const UpdateProjects = async (resumeId, values) => {
-    const response = await axiosInstance("put", `/resumes/update-projects-info/${resumeId}`,values);
+    const response = await axiosInstance("put", `/resumes/update-projects-info/${resumeId}`, values);
     return response;
 };
 
 
 //modifier les certifications
 export const UpdateCertifications = async (resumeId, values) => {
-    const response = await axiosInstance("put", `/resumes/update-certifications-info/${resumeId}`,values);
+    const response = await axiosInstance("put", `/resumes/update-certifications-info/${resumeId}`, values);
     return response;
 };
 
 //modifier les hobbies
 export const UpdateHobbies = async (resumeId, values) => {
-    const response = await axiosInstance("put", `/resumes/update-hobbies-info/${resumeId}`,values);
+    const response = await axiosInstance("put", `/resumes/update-hobbies-info/${resumeId}`, values);
     return response;
 };
 
 //modifier les langues
 export const UpdateLanguages = async (resumeId, values) => {
-    const response = await axiosInstance("put", `/resumes/update-languages-info/${resumeId}`,values);
+    const response = await axiosInstance("put", `/resumes/update-languages-info/${resumeId}`, values);
     return response;
 };

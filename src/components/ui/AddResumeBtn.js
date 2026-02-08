@@ -34,6 +34,7 @@ function AddResumeBtn({ setResumeCreated }) {
         borderRadius="10px"
         sx={{
           borderColor: "#efefef",
+          width: { xs: 230 },
           backgroundColor: "#efefef",
           transition: 'all 0.3s ease-in-out',
           cursor: "pointer",

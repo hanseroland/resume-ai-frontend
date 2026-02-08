@@ -1,17 +1,17 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { ResumeInfoContext } from '../../context/ResumeInfoContext';
-import { 
-    Box, 
-    TextField, 
-    Button, 
-    Typography, 
+import {
+    Box,
+    TextField,
+    Button,
+    Typography,
     CircularProgress,
 } from "@mui/material";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import FormHead from '../ui/formsHead/FormHead';
 import Grid from "@mui/material/Grid2";
-import { GenerateText, GenerateThreeText, UpdateSummaryInfo } from '../../api/resumes';
+import { GenerateText, GenerateThreeGeminiText, GenerateThreeText, UpdateSummaryInfo } from '../../api/resumes';
 import { useDispatch } from 'react-redux';
 import { SetCurrentResume } from '../../redux/slices/resumeSlice';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
@@ -19,7 +19,7 @@ import SelectionDialog from '../ui/dialogs/SelectionDialog';
 import ResumeList from '../ui/list/ResumeList';
 
 function SummaryForm({ enableNext, resumeId }) {
-    
+
     const { resumeData, setResumeData } = useContext(ResumeInfoContext);
     const [isLoading, setIsLoading] = useState(false);
     const [highlight, setHighlight] = useState(false);
@@ -42,11 +42,11 @@ function SummaryForm({ enableNext, resumeId }) {
                 summary: resumeData?.summary || "",
             });
             enableNext(true);
-        }else{
+        } else {
             enableNext(false);
         }
 
-    }, [resumeData]); 
+    }, [resumeData]);
 
     const handleChange = (e, setFieldValue) => {
         //enableNext(false);
@@ -92,7 +92,7 @@ function SummaryForm({ enableNext, resumeId }) {
                 const flashInterval = setInterval(() => {
                     setHighlight((prev) => !prev);
                     flashCount++;
-                    if (flashCount >= 6) clearInterval(flashInterval); 
+                    if (flashCount >= 6) clearInterval(flashInterval);
                 }, 300);
             } else {
                 alert("Erreur lors de la génération du texte par l'IA : " + response.message);
@@ -105,27 +105,41 @@ function SummaryForm({ enableNext, resumeId }) {
         }
     };
 
-     // Fonction appelée quand un résumé est sélectionné
-        const handleSelectSummary = (summary, setFieldValue) => {
-            setFieldValue("summary", summary);
-            setResumeData((prev) => ({ ...prev, summary }));
-            setOpenDialog(false);
-        };
+    // Fonction appelée quand un résumé est sélectionné
+    const handleSelectSummary = (summary, setFieldValue) => {
+        setFieldValue("summary", summary);
+        setResumeData((prev) => ({ ...prev, summary }));
+        setOpenDialog(false);
+    };
 
-      const handleGenerateThreeSubmit = async () => {
-        
-          setIsLoading(true)
-          const prompt = `Génère des résumés de profil professionnel de 300 caractères, clair et concis pour un CV, dont le titre est ${resumeData?.title || resumeData?.personalInfo?.jobTitle}.`;
+    const handleGenerateThreeSubmit = async () => {
 
-          const response = await GenerateThreeText(prompt)
-          
-           if (response.data.summaries) {
-            setGeneratedSummaries(response.data.summaries);
-            setOpenDialog(true);
-          }
-           setIsLoading(false)
-          
-        };
+        setIsLoading(true);
+        try {
+            const prompt = `Génère des résumés de profil professionnel de 300 caractères pour un CV, dont le titre est ${resumeData?.title || resumeData?.personalInfo?.jobTitle}.`;
+
+            const response = await GenerateThreeGeminiText(prompt);
+
+            // Ajout d'une vérification de sécurité (Optional Chaining)
+            if (response?.success && response?.data?.summaries) {
+                console.log("Données reçues :", response.data.summaries);
+
+                // 1. Mettre à jour la liste des résumés
+                setGeneratedSummaries(response.data.summaries);
+
+                // 2. Ouvrir le dialogue pour que l'utilisateur choisisse
+                setOpenDialog(true);
+            } else {
+                alert("Format de réponse invalide ou erreur serveur.");
+            }
+        } catch (error) {
+            console.error("Erreur lors de l'appel API :", error);
+            alert("Impossible de générer les résumés.");
+        } finally {
+            setIsLoading(false);
+        }
+
+    };
 
     return (
         <Box>
@@ -191,11 +205,11 @@ function SummaryForm({ enableNext, resumeId }) {
                                         open={openDialog}
                                         //textes={generatedSummaries}
                                         onClose={() => setOpenDialog(false)}
-                                       // onSelect={(summary) => handleSelectSummary(summary, setFieldValue)}
+                                    // onSelect={(summary) => handleSelectSummary(summary, setFieldValue)}
                                     >
-                                         <ResumeList 
-                                            textes={generatedSummaries} 
-                                            onSelect={(summary) => handleSelectSummary(summary, setFieldValue)} 
+                                        <ResumeList
+                                            textes={generatedSummaries}
+                                            onSelect={(summary) => handleSelectSummary(summary, setFieldValue)}
                                         />
                                     </SelectionDialog>
                                 </Grid>
