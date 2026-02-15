@@ -126,30 +126,33 @@ export default function ResumeCard({ resume, removeResume }) {
         }}
       />
 
-      <CardContent
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          py: 3,
-        }}
-      >
-        <Box
+      <Link
+        to={`/resumes/${resume._id}/edit`}>
+        <CardContent
           sx={{
-            width: 80,
-            height: 80,
             display: 'flex',
+            flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: 'rgba(0, 0, 0, 0.05)',
-            borderRadius: '50%',
+            py: 3,
           }}
         >
-          <Article sx={{ fontSize: 48, color: '#555' }} />
-        </Box>
-      </CardContent>
-
+          <Box sx={{
+            width: { xs: 80, sm: 100 },
+            height: { xs: 100, sm: 120 },
+            borderRadius: '16px',
+            overflow: 'hidden',
+            flexShrink: 0,
+            bgcolor: '#e2e8f0'
+          }}>
+            <Box
+              component="img"
+              src={resume?.previewUrl || "/images/document_user_16750.png"}
+              sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+          </Box>
+        </CardContent>
+      </Link>
       {/*<CardActions
         sx={{
           display: 'flex',

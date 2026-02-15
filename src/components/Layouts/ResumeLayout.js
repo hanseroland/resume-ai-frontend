@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import AppBarComponent from './AppBarComponent';
@@ -94,11 +94,14 @@ const ResumeLayout = () => {
         sx={{
           flexGrow: 0.5,
           p: 2,
+          height: '100vh',
           minHeight: '100vh',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
+          width: "100%",
+          backgroundColor: '#f8f8f8'
         }}
       >
         <Toolbar />

@@ -18,6 +18,12 @@ export const GetUserResumes = async (userId) => {
     return response;
 };
 
+// Obtenir tous les cv en fonction du userId
+export const GetLatestUserResumes = async (userId) => {
+    const response = await axiosInstance("get", `/resumes/user/${userId}/latest`);
+    return response;
+};
+
 //créer un cv par le titre
 export const CreateResume = async (values) => {
     const response = await axiosInstance("post", "/resumes/create", values);
