@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { Button, TextField, Box, Typography, IconButton, CircularProgress } from '@mui/material';
+import { Button, TextField, Box, IconButton, CircularProgress } from '@mui/material';
 import { Add, Delete } from '@mui/icons-material';
 import { useDispatch } from 'react-redux';
 import { ResumeInfoContext } from '../../context/ResumeInfoContext';
@@ -38,7 +38,7 @@ const EducationForm = ({ enableNext, resumeId }) => {
   };
 
   const addNewEducation = () => {
-    setEducationList([...educationList,  {...formField}])
+    setEducationList([...educationList, { ...formField }])
   }
 
   const removeEducation = () => {
@@ -49,7 +49,7 @@ const EducationForm = ({ enableNext, resumeId }) => {
     setLoading(true);
     const response = await UpdateEducations(resumeId, educationList);
 
-    if (response.success) { 
+    if (response.success) {
       dispatch(SetCurrentResume(response.data));
       enableNext(true);
     }
@@ -59,11 +59,12 @@ const EducationForm = ({ enableNext, resumeId }) => {
     }, 1000);
   };
 
-   useEffect(() => {
+  useEffect(() => {
     if (resumeData?.educations && resumeData?.educations.length > 0) {
-        setEducationList(resumeData.educations);
+      setEducationList(resumeData.educations);
     }
     setLoading(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -71,11 +72,13 @@ const EducationForm = ({ enableNext, resumeId }) => {
       ...prev,
       educations: educationList,
     }));
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [educationList]);
 
- 
 
- if (loading) {
+
+  if (loading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
         <CircularProgress />
@@ -86,9 +89,9 @@ const EducationForm = ({ enableNext, resumeId }) => {
   return (
     <Box p={3} bgcolor="white" boxShadow={3} borderRadius={2} maxWidth={600} mx="auto">
       <FormHead
-            title="Education"
-            description="Complétez les informations sur votre formation académique."
-        />
+        title="Education"
+        description="Complétez les informations sur votre formation académique."
+      />
       <>
         {educationList.map((item, index) => (
           <Grid mt={2} container key={index} spacing={2}>

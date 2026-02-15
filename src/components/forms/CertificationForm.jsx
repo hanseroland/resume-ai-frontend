@@ -4,44 +4,49 @@ import { Add, Delete } from '@mui/icons-material';
 import { useDispatch } from 'react-redux';
 import { ResumeInfoContext } from '../../context/ResumeInfoContext';
 import Grid from '@mui/material/Grid2';
-import { UpdateProjects } from '../../api/resumes';
+import { UpdateCertifications } from '../../api/resumes';
 import { SetCurrentResume } from '../../redux/slices/resumeSlice';
 import FormHead from '../ui/formsHead/FormHead';
 
 const formField = {
   title: "",
-  description: "",
-  technologies: "",
-  link: ""
+  issuingOrganization: "",
+  dateIssued: "",
+  description: ""
 }
 
-export default function ProjectForm({ enableNext, resumeId }) {
+export default function CertificationForm({ enableNext, resumeId }) {
   const { resumeData, setResumeData } = useContext(ResumeInfoContext);
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
-  const [projectList, setProjectList] = useState(resumeData?.projects || [formField]);
+  const [certificationList, setCertificationList] = useState(resumeData?.certifications || [formField]);
 
-  // Fonction pour gérer la mise à jour en temps réel du contexte et du formulaire
-  const handleChangeProject = (index, e) => {
-    const newEntries = projectList.slice();
-    const { name, value } = e.target;
-    newEntries[index][name] = value;
-    setProjectList(newEntries);
+  const formatDate = (date) => {
+    if (!date) return "";
+    return new Date(date).toISOString().split("T")[0]; // Convertit en "YYYY-MM-DD"
   };
 
-  const addNewProject = () => {
-    setProjectList([...projectList,  {...formField}]);
+  // Fonction pour gérer la mise à jour en temps réel du contexte et du formulaire
+  const handleChangeCertification = (index, e) => {
+    const newEntries = certificationList.slice();
+    const { name, value } = e.target;
+    newEntries[index][name] = value;
+    setCertificationList(newEntries);
+  };
+
+  const addNewCertification = () => {
+    setCertificationList([...certificationList, { ...formField }]);
   }
 
-  const removeProject = () => {
-    setProjectList(projectList => projectList.slice(0, -1));
+  const removeCertification = () => {
+    setCertificationList(certificationList => certificationList.slice(0, -1));
   }
 
   const handleSubmit = async () => {
     setLoading(true);
-    const response = await UpdateProjects(resumeId, projectList);
+    const response = await UpdateCertifications(resumeId, certificationList);
 
-    if (response.success) { 
+    if (response.success) {
       dispatch(SetCurrentResume(response.data));
       enableNext(true);
     }
@@ -51,68 +56,69 @@ export default function ProjectForm({ enableNext, resumeId }) {
     }, 1000);
   };
 
-  // Mettre à jour resumeData lorsque projectList change
+  // Mettre à jour resumeData lorsque certificationList change
   useEffect(() => {
     setResumeData((prev) => ({
       ...prev,
-      projects: projectList,
+      certifications: certificationList,
     }));
-  }, [projectList]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [certificationList]);
 
   return (
     <Box p={3} bgcolor="white" boxShadow={3} borderRadius={2} maxWidth={600} mx="auto">
       <FormHead
-        title="Projets"
-        description="Ajouter vos projets professionnels"
+        title="Certifications"
+        description="Ajouter vos certifications professionnelles"
       />
       <>
-        {projectList.map((item, index) => (
+        {certificationList.map((item, index) => (
           <Grid mt={2} container key={index} spacing={2}>
-            <Grid size={{xs:12,sm:6}}>
-              <span>Titre du projet</span>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <span>Titre de la certification</span>
               <TextField
                 fullWidth
                 name="title"
                 value={item?.title}
-                onChange={(e) => handleChangeProject(index, e)}
+                onChange={(e) => handleChangeCertification(index, e)}
                 margin="dense"
               />
             </Grid>
-            <Grid size={{xs:12,sm:6}}>
-              <span>Technologies utilisées</span>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <span>Organisme émetteur</span>
               <TextField
                 fullWidth
-                name="technologies"
-                value={item?.technologies}
-                onChange={(e) => handleChangeProject(index, e)}
+                name="issuingOrganization"
+                value={item?.issuingOrganization}
+                onChange={(e) => handleChangeCertification(index, e)}
                 margin="dense"
               />
             </Grid>
-            <Grid size={{xs:12}}>
-              <span>Lien vers le projet</span>
+            <Grid size={{ xs: 12, sm: 12 }}>
+              <span>Date d'émission</span>
               <TextField
                 fullWidth
-                name="link"
-                value={item?.link}
-                onChange={(e) => handleChangeProject(index, e)}
+                name="dateIssued"
+                value={formatDate(item?.dateIssued)}
+                onChange={(e) => handleChangeCertification(index, e)}
                 margin="dense"
+                type="date"
               />
             </Grid>
-            <Grid size={{xs:12}}>
+            <Grid size={{ xs: 12, sm: 12 }}>
               <span>Description</span>
               <TextField
                 fullWidth
                 name="description"
                 value={item?.description}
-                onChange={(e) => handleChangeProject(index, e)}
+                onChange={(e) => handleChangeCertification(index, e)}
                 margin="dense"
               />
             </Grid>
-            
             <Box textAlign="right">
               <IconButton
                 color="error"
-                onClick={removeProject}
+                onClick={removeCertification}
               >
                 <Delete />
               </IconButton>
@@ -124,12 +130,12 @@ export default function ProjectForm({ enableNext, resumeId }) {
       <Box mt={3} display="flex" justifyContent="space-between">
         <Button
           startIcon={<Add />}
-          onClick={addNewProject}
+          onClick={addNewCertification}
           variant="outlined"
           color="primary"
           sx={{ textTransform: 'none' }}
         >
-          Ajouter un projet
+          Ajouter une certification
         </Button>
         <Button
           onClick={handleSubmit}

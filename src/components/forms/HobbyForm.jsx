@@ -4,42 +4,41 @@ import { Add, Delete } from '@mui/icons-material';
 import { useDispatch } from 'react-redux';
 import { ResumeInfoContext } from '../../context/ResumeInfoContext';
 import Grid from '@mui/material/Grid2';
-import { UpdateLanguages } from '../../api/resumes';
+import { UpdateHobbies } from '../../api/resumes';
 import { SetCurrentResume } from '../../redux/slices/resumeSlice';
 import FormHead from '../ui/formsHead/FormHead';
 
 const formField = {
-  name: "",
-  note: ""
+  hobby: ""
 }
 
-export default function LanguageForm({ enableNext, resumeId }) {
+export default function HobbyForm({ enableNext, resumeId }) {
   const { resumeData, setResumeData } = useContext(ResumeInfoContext);
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
-  const [languageList, setLanguageList] = useState(resumeData?.languages || [formField]);
+  const [hobbyList, setHobbyList] = useState(resumeData?.hobbies || [formField]);
 
   // Fonction pour gérer la mise à jour en temps réel du contexte et du formulaire
-  const handleChangeLanguage = (index, e) => {
-    const newEntries = languageList.slice();
+  const handleChangeHobby = (index, e) => {
+    const newEntries = hobbyList.slice();
     const { name, value } = e.target;
     newEntries[index][name] = value;
-    setLanguageList(newEntries);
+    setHobbyList(newEntries);
   };
 
-  const addNewLanguage = () => {
-    setLanguageList([...languageList,  {...formField}]);
+  const addNewHobby = () => {
+    setHobbyList([...hobbyList, { ...formField }]);
   }
 
-  const removeLanguage = () => {
-    setLanguageList(languageList => languageList.slice(0, -1));
+  const removeHobby = () => {
+    setHobbyList(hobbyList => hobbyList.slice(0, -1));
   }
 
   const handleSubmit = async () => {
     setLoading(true);
-    const response = await UpdateLanguages(resumeId, languageList);
+    const response = await UpdateHobbies(resumeId, hobbyList);
 
-    if (response.success) { 
+    if (response.success) {
       dispatch(SetCurrentResume(response.data));
       enableNext(true);
     }
@@ -49,47 +48,39 @@ export default function LanguageForm({ enableNext, resumeId }) {
     }, 1000);
   };
 
-  // Mettre à jour resumeData lorsque languageList change
+  // Mettre à jour resumeData lorsque hobbyList change
   useEffect(() => {
     setResumeData((prev) => ({
       ...prev,
-      languages: languageList,
+      hobbies: hobbyList,
     }));
-  }, [languageList]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hobbyList]);
 
   return (
     <Box p={3} bgcolor="white" boxShadow={3} borderRadius={2} maxWidth={600} mx="auto">
       <FormHead
-        title="Langues"
-        description="Ajouter vos compétences linguistiques"
+        title="Loisirs et Intérêts"
+        description="Ajouter vos loisirs et intérêts"
       />
       <>
-        {languageList.map((item, index) => (
+        {hobbyList.map((item, index) => (
           <Grid mt={2} container key={index} spacing={2}>
-            <Grid size={{xs:12,sm:12}}>
-              <span>Langue</span>
+            <Grid size={{ xs: 12, sm: 12 }}>
+              <span>Loisir ou Intérêt</span>
               <TextField
                 fullWidth
-                name="name"
-                value={item?.name}
-                onChange={(e) => handleChangeLanguage(index, e)}
-                margin="dense"
-              />
-            </Grid>
-            <Grid size={{xs:12,sm:12}}>
-              <span>Niveau</span>
-              <TextField
-                fullWidth
-                name="note"
-                value={item?.note}
-                onChange={(e) => handleChangeLanguage(index, e)}
+                name="hobby"
+                value={item?.hobby}
+                onChange={(e) => handleChangeHobby(index, e)}
                 margin="dense"
               />
             </Grid>
             <Box textAlign="right">
               <IconButton
                 color="error"
-                onClick={removeLanguage}
+                onClick={removeHobby}
               >
                 <Delete />
               </IconButton>
@@ -101,12 +92,12 @@ export default function LanguageForm({ enableNext, resumeId }) {
       <Box mt={3} display="flex" justifyContent="space-between">
         <Button
           startIcon={<Add />}
-          onClick={addNewLanguage}
+          onClick={addNewHobby}
           variant="outlined"
           color="primary"
           sx={{ textTransform: 'none' }}
         >
-          Ajouter une langue
+          Ajouter un loisir ou intérêt
         </Button>
         <Button
           onClick={handleSubmit}

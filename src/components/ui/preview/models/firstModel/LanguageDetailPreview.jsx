@@ -1,4 +1,4 @@
-import { Box, Typography, Divider, Stack } from "@mui/material";
+import { Box, Typography, Divider } from "@mui/material";
 import Grid from '@mui/material/Grid2';
 import { Language } from "@mui/icons-material";
 

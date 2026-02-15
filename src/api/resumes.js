@@ -49,6 +49,40 @@ export const UpdateSummaryInfo = async (resumeId, values) => {
 };
 
 
+// compter le nombre de CV d'un utilisateur
+export const CountUserResume = async (userId) => {
+    const response = await axiosInstance("get", `/resumes/user/count/${userId}`);
+    return response;
+};
+
+// compter tous les CV
+export const CountAllResume = async () => {
+    const response = await axiosInstance("get", `/resumes/count/all`);
+    return response;
+};
+
+// compter tous les CV par mois
+export const CountAllResumeByMonthly = async () => {
+    const response = await axiosInstance("get", `/resumes/stats/monthly`);
+    return response;
+};
+
+
+// compter tous les CV par mois
+export const CountAllResumeByWeeklyActivity = async () => {
+    const response = await axiosInstance("get", `/resumes/stats/weekly-activity`);
+    return response;
+};
+
+
+// calculer la performance hebdomadaire (augmentation ou diminution en %)
+export const CountAllResumeByWeeklyPerformance = async () => {
+    const response = await axiosInstance("get", `/resumes/stats/weekly-performance`);
+    return response;
+};
+
+
+
 /*************************** */
 /*Routes avec l'API de OpenAI*
 /

@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import ResumeLayout from './components/Layouts/ResumeLayout';
 import Home from './pages/Home';
@@ -12,15 +11,14 @@ import SignInPage from './pages/SignInPage';
 import SimpleLayout from './components/Layouts/SimpleLayout';
 import EditResume from './pages/EditResume';
 import { ToastContainer } from 'react-toastify';
-import { AuthProvider, useAuth } from './context/authContext';
-import { Box, CircularProgress, Typography } from '@mui/material';
+import { AuthProvider } from './context/authContext';
 import ResumeView from './pages/ResumeView';
 
 
 function App() {
 
   // Utiliser "/nfc" en production et "/" en local
-  const basename = process.env.PUBLIC_URL || '/';
+  //const basename = process.env.PUBLIC_URL || '/';
 
 
   return (

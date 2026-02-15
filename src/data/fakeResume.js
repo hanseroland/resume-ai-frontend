@@ -29,7 +29,7 @@ export const fakeResume = {
         description: "Conception et développement d'applications web full-stack en utilisant Node.js et MongoDB.",
       },
     ],
-    skills: ["JavaScript", "React", "Node.js", "MongoDB", "TypeScript", "Docker", "Git"],
+    skills: ["JavaScript", "React", "Node.jsx", "MongoDB", "TypeScript", "Docker", "Git"],
     educations: [
       {
         degree: "Master en Informatique",
@@ -67,7 +67,7 @@ export const fakeResume = {
       {
         title: "Gestionnaire de tâches collaboratif",
         description: "Application web permettant aux équipes de collaborer efficacement en organisant leurs tâches et projets.",
-        technologies: ["React", "Node.js", "MongoDB", "GraphQL"],
+        technologies: ["React", "Node.jsx", "MongoDB", "GraphQL"],
         link: "https://github.com/johndoe/task-manager",
       },
       {

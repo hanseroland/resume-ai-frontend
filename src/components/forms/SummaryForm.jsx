@@ -11,7 +11,7 @@ import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import FormHead from '../ui/formsHead/FormHead';
 import Grid from "@mui/material/Grid2";
-import { GenerateText, GenerateThreeGeminiText, GenerateThreeText, UpdateSummaryInfo } from '../../api/resumes';
+import { GenerateThreeGeminiText, UpdateSummaryInfo } from '../../api/resumes';
 import { useDispatch } from 'react-redux';
 import { SetCurrentResume } from '../../redux/slices/resumeSlice';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
@@ -22,6 +22,7 @@ function SummaryForm({ enableNext, resumeId }) {
 
     const { resumeData, setResumeData } = useContext(ResumeInfoContext);
     const [isLoading, setIsLoading] = useState(false);
+    // eslint-disable-next-line 
     const [highlight, setHighlight] = useState(false);
     const dispatch = useDispatch();
 
@@ -45,7 +46,7 @@ function SummaryForm({ enableNext, resumeId }) {
         } else {
             enableNext(false);
         }
-
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [resumeData]);
 
     const handleChange = (e, setFieldValue) => {
@@ -75,7 +76,7 @@ function SummaryForm({ enableNext, resumeId }) {
         }, 1000);
     };
 
-    const handleGenerateSummary = async (setFieldValue) => {
+    /*const handleGenerateSummary = async (setFieldValue) => {
         try {
             setIsLoading(true);
             const prompt = `Génère un résumé de profil professionnel de 300 caractères, clair et concis pour un CV, dont le titre est ${resumeData?.title || resumeData?.personalInfo?.jobTitle}.`;
@@ -103,7 +104,7 @@ function SummaryForm({ enableNext, resumeId }) {
         } finally {
             setIsLoading(false);
         }
-    };
+    };*/
 
     // Fonction appelée quand un résumé est sélectionné
     const handleSelectSummary = (summary, setFieldValue) => {

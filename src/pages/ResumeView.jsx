@@ -35,11 +35,6 @@ function ResumeView() {
         window.print();
     }
 
-    const ShareResume = () => {
-        // Logic to share the resume (e.g., generate a shareable link)
-
-    }
-
 
     useEffect(() => {
         const style = document.createElement('style');

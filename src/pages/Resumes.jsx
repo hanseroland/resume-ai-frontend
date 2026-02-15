@@ -1,6 +1,6 @@
 
 import React, { useEffect, Suspense } from 'react'
-import { Alert, Box, CircularProgress, Container, Typography } from '@mui/material'
+import { Alert, Box, CircularProgress, Typography } from '@mui/material'
 import Grid from '@mui/material/Grid2';
 import AddResumeBtn from '../components/ui/AddResumeBtn';
 import { DeleteResume, GetUserResumes } from '../api/resumes';
@@ -42,6 +42,7 @@ function Resumes() {
     } else {
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resumeCreated, currentUser]); // Relance la récupération des CV lorsqu'un nouveau CV est créé
 
 

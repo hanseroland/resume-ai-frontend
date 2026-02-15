@@ -12,7 +12,7 @@ const data = [
     { day: 'Dim', value: 25 },
 ];
 
-const WeeklyActivityCard = () => {
+const WeeklyActivityCard = ({ weeklyData, performance }) => {
     return (
         <Paper elevation={0} sx={{ p: 3, borderRadius: '28px', border: '1px solid #f1f5f9', height: '100%' }}>
             <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#1e293b' }}>
@@ -25,7 +25,7 @@ const WeeklyActivityCard = () => {
             <Box sx={{ width: '100%', height: 220 }}>
                 {/* Utilisation du mode responsive natif de Recharts 3 */}
                 <BarChart
-                    data={data}
+                    data={weeklyData.length > 0 ? weeklyData : data} // Utilise les données réelles ou les données de démonstration
                     responsive
                     style={{ width: '100%', height: '100%' }}
                     margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
@@ -62,8 +62,8 @@ const WeeklyActivityCard = () => {
                         <Typography variant="caption" sx={{ fontWeight: 800, color: '#22c55e', display: 'block' }}>
                             PERFORMANCE
                         </Typography>
-                        <Typography variant="body2" sx={{ fontWeight: 700, color: '#166534' }}>
-                            +12% cette semaine
+                        <Typography variant="body2" sx={{ fontWeight: 700, color: performance.isPositive ? '#166534' : '#9f1239' }}>
+                            {performance.isPositive ? '+' : ''}{performance.value}% cette semaine
                         </Typography>
                     </Grid>
                     <Grid size="auto">

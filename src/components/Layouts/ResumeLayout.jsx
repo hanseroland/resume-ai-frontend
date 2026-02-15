@@ -15,7 +15,7 @@ import { Alert, AlertTitle, CircularProgress, Typography } from '@mui/material';
 const ResumeLayout = () => {
 
   const navigate = useNavigate();
-  const { currentUser, isAuthenticated, loading, logout } = useAuth();
+  const { currentUser, isAuthenticated, loading } = useAuth();
   const [userError, setUserError] = useState(null);
 
 
@@ -92,16 +92,16 @@ const ResumeLayout = () => {
       <Box
         component="main"
         sx={{
-          flexGrow: 0.5,
+          flexGrow: 1,
           p: 2,
-          height: '100vh',
           minHeight: '100vh',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
           width: "100%",
-          backgroundColor: '#f8f8f8'
+          backgroundColor: '#f8f8f8',
+
         }}
       >
         <Toolbar />

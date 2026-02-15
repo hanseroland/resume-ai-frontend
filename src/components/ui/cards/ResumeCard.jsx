@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card, CardHeader, CardContent, Typography, IconButton, Box, Menu, MenuItem, ListItemIcon } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { Delete, Share, Article, Edit, MoreVertOutlined } from '@mui/icons-material';
+import { Delete, Share, Edit, MoreVertOutlined } from '@mui/icons-material';
 import ConfirmDialog from '../dialogs/ConfirmDialog';
 
 export default function ResumeCard({ resume, removeResume }) {
@@ -121,8 +121,9 @@ export default function ResumeCard({ resume, removeResume }) {
 
         }
         sx={{
-          backgroundColor: 'rgba(255, 255, 255, 0.6)',
+
           borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
+          background: 'linear-gradient(90deg, #eef7ff 0%, #d2f7cd 50%, #f1d8f7 100%)',
         }}
       />
 

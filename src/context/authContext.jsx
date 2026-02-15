@@ -58,6 +58,7 @@ export const AuthProvider = ({ children }) => {
                 navigate('/connexion');
             }
         },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         [navigate]
     );
 

@@ -4,13 +4,27 @@ import { axiosInstance, axiosInstanceUploade } from ".";
 export const GetAllUsers = async () => {
     const response = await axiosInstance("get", "/users");
     return response;
-};  
+};
 
 // Obtenir tous les utilisateurs
 export const GetTotalUsers = async () => {
     const response = await axiosInstance("get", "/users/count");
     return response;
-};  
+};
+
+
+// Obtenir tous les utilisateurs
+export const GetTotalAdmins = async () => {
+    const response = await axiosInstance("get", "/users/count/admins");
+    return response;
+};
+
+
+// Obtenir tous les utilisateurs
+export const GetTotalStandard = async () => {
+    const response = await axiosInstance("get", "/users/count/standard");
+    return response;
+};
 
 // Obtenir tous les récents
 export const GetTotalRecentUsers = async () => {
@@ -63,7 +77,9 @@ export const AdminAddUser = async (userData) => {
 
 // Mettre à jour la photo de profil d'un utilisateur
 export const UpdateProfilePicture = async (userId, photo) => {
-  
-    const response = await axiosInstanceUploade("put", `/users/update-picture/${userId}`, photo);  
+
+    const response = await axiosInstanceUploade("put", `/users/update-picture/${userId}`, photo);
     return response;
 };
+
+

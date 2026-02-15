@@ -4,7 +4,7 @@ import { Add, Delete } from "@mui/icons-material";
 import { useDispatch } from "react-redux";
 import { ResumeInfoContext } from "../../context/ResumeInfoContext";
 import Grid from "@mui/material/Grid2";
-import {UpdateSkills } from "../../api/resumes";
+import { UpdateSkills } from "../../api/resumes";
 import { SetCurrentResume } from "../../redux/slices/resumeSlice";
 import FormHead from "../ui/formsHead/FormHead";
 
@@ -19,9 +19,9 @@ export default function SkillForm({ enableNext, resumeId }) {
   const [loading, setLoading] = useState(false);
   const [skillList, setSkillList] = useState(resumeData?.skills || [formField]);
 
- 
+
   // Fonction pour gérer la mise à jour en temps réel du contexte et du formulaire
-  const handleChangeSkill = (index,name, value) => {
+  const handleChangeSkill = (index, name, value) => {
     const newEntries = skillList.slice();
     // Validation pour limiter la valeur de level entre 0 et 5
     if (name === "level") {
@@ -35,7 +35,7 @@ export default function SkillForm({ enableNext, resumeId }) {
   };
 
   const addNewSkill = () => {
-    setSkillList([...skillList,  {...formField}]);
+    setSkillList([...skillList, { ...formField }]);
   }
 
   const removeSkill = () => {
@@ -46,7 +46,7 @@ export default function SkillForm({ enableNext, resumeId }) {
     setLoading(true);
     const response = await UpdateSkills(resumeId, skillList);
 
-    if (response.success) { 
+    if (response.success) {
       dispatch(SetCurrentResume(response.data));
       enableNext(true);
     }
@@ -64,6 +64,8 @@ export default function SkillForm({ enableNext, resumeId }) {
       ...prev,
       skills: skillList,
     }));
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [skillList]);
 
   return (
@@ -81,7 +83,7 @@ export default function SkillForm({ enableNext, resumeId }) {
                 fullWidth
                 //name="name"
                 value={item?.name}
-                onChange={(e) => handleChangeSkill(index,'name', e.target.value)}
+                onChange={(e) => handleChangeSkill(index, 'name', e.target.value)}
                 margin="dense"
               />
             </Grid>
@@ -91,7 +93,7 @@ export default function SkillForm({ enableNext, resumeId }) {
                 fullWidth
                 //name="level"
                 value={item?.level}
-                onChange={(e) => handleChangeSkill(index,'level', e.target.value)}
+                onChange={(e) => handleChangeSkill(index, 'level', e.target.value)}
                 type="number"
                 margin="dense"
                 inputProps={{ min: 0, max: 5 }} // Ajout des attributs min et max

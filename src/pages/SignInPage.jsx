@@ -18,7 +18,8 @@ const SignInPage = () => {
   const navigate = useNavigate();
   const { login, isAuthenticated, currentUser, loading } = useAuth();
   const [loginError, setLoginError] = useState(null);
-  const [isAuthenticating, setIsAuthenticating] = useState(false); // Pour le spinner global
+  // eslint-disable-next-line 
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
 
 
 
@@ -27,7 +28,7 @@ const SignInPage = () => {
     setLoginError(null);
 
     try {
-      const userData = await login(values); // ✅ Attend la réponse de la fonction login
+      const userData = await login(values); // Attend la réponse de la fonction login
       if (userData) { // Si la connexion a réussi
         navigate('/');
       } else {
@@ -42,7 +43,7 @@ const SignInPage = () => {
   }, [login, navigate]);
 
 
-  // ✅ useEffect pour rediriger si déjà connecté (le contexte gère l'état d'authentification)
+  // useEffect pour rediriger si déjà connecté (le contexte gère l'état d'authentification)
   useEffect(() => {
     if (!loading && isAuthenticated) {
       // Si déjà authentifié, redirige vers le tableau de bord
@@ -51,7 +52,7 @@ const SignInPage = () => {
   }, [loading, isAuthenticated, currentUser, navigate]);
 
 
-  // ✅ Afficher un spinner si le contexte est en cours de chargement initial
+  // Afficher un spinner si le contexte est en cours de chargement initial
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>

@@ -27,6 +27,7 @@ const SignupPage = () => {
   const navigate = useNavigate();
   const { isAuthenticated, loading, currentUser } = useAuth();
   const [statusMessage, setStatusMessage] = useState(null);
+  // eslint-disable-next-line 
   const [isSubmittingForm, setIsSubmittingForm] = useState(false);
 
   const handleRegister = useCallback(async (values) => {

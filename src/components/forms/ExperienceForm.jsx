@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { Button, TextField, Box, Typography, IconButton } from "@mui/material";
+import { Button, TextField, Box, IconButton } from "@mui/material";
 import { Add, Delete } from "@mui/icons-material";
 import { useDispatch } from "react-redux";
 import { ResumeInfoContext } from "../../context/ResumeInfoContext";
@@ -21,12 +21,12 @@ const formField = {
   workSummary: ""
 }
 
-export default function ExperienceForm({enableNext, resumeId}) {
+export default function ExperienceForm({ enableNext, resumeId }) {
 
   const { resumeData, setResumeData } = useContext(ResumeInfoContext);
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
-  const [experienceList, setExperienceList] =  useState(resumeData?.experiences || [formField]);
+  const [experienceList, setExperienceList] = useState(resumeData?.experiences || [formField]);
 
 
 
@@ -44,7 +44,7 @@ export default function ExperienceForm({enableNext, resumeId}) {
   };
 
   const addNewExperience = () => {
-    setExperienceList([...experienceList, {...formField} ])
+    setExperienceList([...experienceList, { ...formField }])
   }
 
   const RemoveExperience = () => {
@@ -58,19 +58,19 @@ export default function ExperienceForm({enableNext, resumeId}) {
 
   }
 
-   const handleSubmit = async () => {
-          setLoading(true);
-          const response = await UpdateExperiences(resumeId, experienceList);
-  
-          if (response.success) { 
-              dispatch(SetCurrentResume(response.data));
-              enableNext(true);
-          }
-          setLoading(false);
-          setTimeout(() => {
-              alert("Détails enregistrés avec succès !");
-          }, 1000);
-    };
+  const handleSubmit = async () => {
+    setLoading(true);
+    const response = await UpdateExperiences(resumeId, experienceList);
+
+    if (response.success) {
+      dispatch(SetCurrentResume(response.data));
+      enableNext(true);
+    }
+    setLoading(false);
+    setTimeout(() => {
+      alert("Détails enregistrés avec succès !");
+    }, 1000);
+  };
 
 
 
@@ -80,18 +80,20 @@ export default function ExperienceForm({enableNext, resumeId}) {
       ...resumeData,
       experiences: experienceList,
     });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [experienceList]);
 
- 
+
 
   return (
     <Box p={3} bgcolor="white" boxShadow={3} borderRadius={2} maxWidth={600} mx="auto">
       <FormHead
-                title="Expériences professionnelles"
-                description="Ajouter une ou des expérience(s) professionnelle(s)"
-        />
+        title="Expériences professionnelles"
+        description="Ajouter une ou des expérience(s) professionnelle(s)"
+      />
       <>
-      {experienceList.map((item, index) => (
+        {experienceList.map((item, index) => (
           <Grid mt={2} container key={index} spacing={2}>
             <Grid size={{ xs: 12, sm: 6 }}>
               <span>Titre du poste</span>
@@ -158,7 +160,7 @@ export default function ExperienceForm({enableNext, resumeId}) {
             <Grid size={{ xs: 12, sm: 12 }}>
               <RichTextEditor
                 index={index}
-                value={item?.workSummary} 
+                value={item?.workSummary}
                 onRichTextEditorChange={(value) => handleRichTextEditorChange(value, 'workSummary', index)}
               />
             </Grid>
