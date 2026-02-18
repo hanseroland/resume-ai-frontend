@@ -13,6 +13,9 @@ import EditResume from './pages/EditResume';
 import { ToastContainer } from 'react-toastify';
 import { AuthProvider } from './context/authContext';
 import ResumeView from './pages/ResumeView';
+import ResetPassword from './pages/ResetPassword';
+import ForgotPassword from './pages/ForgotPassword';
+import ActivateAccount from './pages/ActivateAccount';
 
 
 function App() {
@@ -32,6 +35,9 @@ function App() {
             <Route element={<SimpleLayout />}>
               <Route path="/inscription" element={<SignupPage />} />
               <Route path="/connexion" element={<SignInPage />} />
+              <Route path="/reset-password/:token" element={<ResetPassword />} />
+              <Route path="/activate/:token" element={<ActivateAccount />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="*" element={<NotFoundPage />} />
             </Route>
             {/* Section Admin */}

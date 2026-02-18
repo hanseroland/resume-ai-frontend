@@ -151,6 +151,12 @@ const SignInPage = () => {
                 Inscrivez-vous
               </a>
             </Typography>
+            <Typography variant="body2" sx={{ mb: 1, mt: 2 }}>
+              Mot de passe oublié ?{" "}
+              <a href="/forgot-password" style={{ color: "blue", textDecoration: "none" }}>
+                Réinitialisez-le
+              </a>
+            </Typography>
             {/* <Button
               fullWidth
               variant="outlined"
