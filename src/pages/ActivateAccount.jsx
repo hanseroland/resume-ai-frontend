@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
     Box,
@@ -11,39 +10,22 @@ import {
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import { activateUserAccount } from "../api/auth";
+import { useQuery } from "@tanstack/react-query";
 
 const ActivateAccount = () => {
 
     const { token } = useParams();
     const navigate = useNavigate();
 
-    const [status, setStatus] = useState("loading"); // loading | success | error
-    const [message, setMessage] = useState("");
+    // On utilise useQuery car l'action est automatique au montage
+    const { isLoading, isSuccess, isError, error, data } = useQuery({
+        queryKey: ['activateAccount', token],
+        queryFn: () => activateUserAccount(token),
+        enabled: !!token, // Ne s'exécute que si le token existe
+        retry: false,     // On ne veut pas réessayer si le lien est mort
+        staleTime: 0,     // L'activation est une action unique
+    });
 
-    useEffect(() => {
-        if (!token) return;
-
-        const activateAccount = async () => {
-            try {
-                const res = await activateUserAccount(token);
-
-                setStatus("success");
-                setMessage(res.message || "Compte activé avec succès.");
-            } catch (error) {
-                setStatus("error");
-                setMessage(
-                    error.response?.data?.message ||
-                    "Lien invalide ou expiré."
-                );
-            }
-        };
-
-        activateAccount();
-    }, [token]);
-
-    const handleLoginRedirect = () => {
-        navigate("/connexion");
-    };
 
     return (
         <Box
@@ -67,7 +49,8 @@ const ActivateAccount = () => {
             >
                 <CardContent>
 
-                    {status === "loading" && (
+                    {/* ÉTAT : CHARGEMENT */}
+                    {isLoading && (
                         <>
                             <CircularProgress sx={{ mb: 2 }} />
                             <Typography variant="h6">
@@ -76,7 +59,8 @@ const ActivateAccount = () => {
                         </>
                     )}
 
-                    {status === "success" && (
+                    {/* ÉTAT : SUCCÈS */}
+                    {isSuccess && (
                         <>
                             <CheckCircleOutlineIcon
                                 sx={{ fontSize: 60, color: "green", mb: 2 }}
@@ -85,22 +69,20 @@ const ActivateAccount = () => {
                                 Compte activé 🎉
                             </Typography>
                             <Typography variant="body1" sx={{ mb: 3 }}>
-                                {message}
+                                {data?.message || "Votre compte est désormais actif."}
                             </Typography>
                             <Button
                                 variant="contained"
-                                onClick={handleLoginRedirect}
-                                sx={{
-                                    textTransform: "none",
-                                    px: 4,
-                                }}
+                                onClick={() => navigate("/connexion")}
+                                sx={{ textTransform: "none", px: 4, borderRadius: "2rem" }}
                             >
                                 Se connecter
                             </Button>
                         </>
                     )}
 
-                    {status === "error" && (
+                    {/* ÉTAT : ERREUR */}
+                    {(isError || !token) && (
                         <>
                             <ErrorOutlineIcon
                                 sx={{ fontSize: 60, color: "red", mb: 2 }}
@@ -109,16 +91,12 @@ const ActivateAccount = () => {
                                 Activation impossible
                             </Typography>
                             <Typography variant="body1" sx={{ mb: 3 }}>
-                                {message}
+                                {error?.message || "Le lien d'activation est invalide ou a expiré."}
                             </Typography>
                             <Button
                                 variant="outlined"
                                 onClick={() => navigate("/")}
-                                sx={{
-                                    borderRadius: "2rem",
-                                    textTransform: "none",
-                                    px: 4,
-                                }}
+                                sx={{ borderRadius: "2rem", textTransform: "none", px: 4 }}
                             >
                                 Retour à l'accueil
                             </Button>
