@@ -1,9 +1,9 @@
-import { useState } from 'react';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { Box, Typography, TextField, Alert, Button } from '@mui/material';
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link as RouterLink } from "react-router-dom";
 import { ResetUserPassword } from '../api/auth';
+import { useMutation } from '@tanstack/react-query';
 
 
 const ResetPasswordSchema = Yup.object().shape({
@@ -17,34 +17,21 @@ const ResetPasswordSchema = Yup.object().shape({
 
 const ResetPassword = () => {
     const { token } = useParams();
-    const [status, setStatus] = useState(null); // 'success', 'error', 'loading'
-    const [message, setMessage] = useState('');
 
-    const handleSubmit = async (values, { setSubmitting }) => {
+
+    // Mutation React Query
+    const { mutate, isPending, isSuccess, isError, error, data } = useMutation({
+        mutationFn: (values) => ResetUserPassword(token, values),
+    });
+
+    const handleSubmit = (values, { setSubmitting }) => {
         if (!token) {
-            setStatus('error');
-            setMessage('Jeton de réinitialisation manquant.');
+            // Cas rare où le token serait absent de l'URL
             return;
         }
-
-        setStatus('loading');
-        setMessage('');
-
-        try {
-            const response = await ResetUserPassword(token, values);
-            if (response.success) {
-                setStatus('success');
-                setMessage(response.message);
-            } else {
-                setStatus('error');
-                setMessage(response.message || 'Échec de la réinitialisation du mot de passe.');
-            }
-        } catch (error) {
-            setStatus('error');
-            setMessage('Une erreur est survenue lors de la réinitialisation.');
-        } finally {
-            setSubmitting(false);
-        }
+        mutate(values, {
+            onSettled: () => setSubmitting(false)
+        });
     };
 
     return (
@@ -56,15 +43,29 @@ const ResetPassword = () => {
                 Entrez votre nouveau mot de passe.
             </Typography>
 
-            {status === 'success' && (
+            {/* Message de succès et lien de retour */}
+            {isSuccess && (
                 <Alert severity="success" sx={{ mb: 2 }}>
-                    {message}
-                    <Link href="/connexion" sx={{ display: 'block', mt: 1 }}>Retour à la connexion</Link>
+                    {data?.message || "Votre mot de passe a été réinitialisé !"}
+                    <Button 
+                        component={RouterLink} 
+                        to="/connexion" 
+                        sx={{ display: 'block', mt: 1, textTransform: 'none' }}
+                    >
+                        Retour à la connexion
+                    </Button>
                 </Alert>
             )}
-            {status === 'error' && <Alert severity="error" sx={{ mb: 2 }}>{message}</Alert>}
 
-            {status !== 'success' && (
+            {/* Message d'erreur */}
+            {(isError || (!token && !isSuccess)) && (
+                <Alert severity="error" sx={{ mb: 2 }}>
+                    {error?.message || "Jeton de réinitialisation manquant ou invalide."}
+                </Alert>
+            )}
+
+            {/* Affichage du formulaire uniquement si pas encore de succès */}
+            {!isSuccess && token && (
                 <Formik
                     initialValues={{ password: '', confirmPassword: '' }}
                     validationSchema={ResetPasswordSchema}
@@ -97,7 +98,7 @@ const ResetPassword = () => {
                                 fullWidth
                                 variant="contained"
                                 color="primary"
-                                disabled={isSubmitting}
+                                disabled={isSubmitting || isPending}
                                 sx={{
 
                                     color: "text.primary",
@@ -109,7 +110,7 @@ const ResetPassword = () => {
 
                                 }}
                             >
-                                Envoyer le lien
+                                {isPending ? "Réinitialisation..." : "Changer le mot de passe"}
                             </Button>
                         </Form>
                     )}
