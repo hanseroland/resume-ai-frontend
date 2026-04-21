@@ -1,8 +1,9 @@
-import { useState } from 'react';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
-import { Box, Typography, TextField, Alert, Link, Button } from '@mui/material';
+import { Box, Typography, TextField, Alert, Button } from '@mui/material';
+import { Link as RouterLink } from 'react-router-dom'; // Pour la navigation SPA
 import { ForgotPasswordRequest } from '../api/auth';
+import { useMutation } from '@tanstack/react-query';
 
 
 // Schéma de validation pour l'email
@@ -11,28 +12,15 @@ const ForgotPasswordSchema = Yup.object().shape({
 });
 
 const ForgotPassword = () => {
-    const [status, setStatus] = useState(null); // 'success', 'error', 'loading'
-    const [message, setMessage] = useState('');
+    // Mutation React Query
+    const { mutate, isPending, isSuccess, isError, error, data } = useMutation({
+        mutationFn: ForgotPasswordRequest,
+    });
 
-    const handleSubmit = async (values, { setSubmitting }) => {
-        setStatus('loading');
-        setMessage('');
-
-        try {
-            const response = await ForgotPasswordRequest(values);
-            if (response.success) {
-                setStatus('success');
-                setMessage(response.message);
-            } else {
-                setStatus('error');
-                setMessage(response.message || 'Erreur lors de la demande de réinitialisation.');
-            }
-        } catch (error) {
-            setStatus('error');
-            setMessage('Une erreur est survenue. Veuillez réessayer.');
-        } finally {
-            setSubmitting(false);
-        }
+    const handleSubmit = (values, { setSubmitting }) => {
+        mutate(values, {
+            onSettled: () => setSubmitting(false)
+        });
     };
 
     return (
@@ -56,10 +44,21 @@ const ForgotPassword = () => {
                 Entrez votre email pour recevoir un lien de réinitialisation.
             </Typography>
 
-            {status === 'success' && <Alert severity="success" sx={{ mb: 2 }}>{message}</Alert>}
-            {status === 'error' && <Alert severity="error" sx={{ mb: 2 }}>{message}</Alert>}
+            {/* Alertes basées sur l'état de la mutation */}
+            {isSuccess && (
+                <Alert severity="success" sx={{ mb: 2 }}>
+                    {data?.message || "Lien de réinitialisation envoyé !"}
+                </Alert>
+            )}
 
-            {status !== 'success' && (
+            {isError && (
+                <Alert severity="error" sx={{ mb: 2 }}>
+                    {error.message}
+                </Alert>
+            )}
+
+            {/* On cache le formulaire si le mail est envoyé avec succès */}
+            {!isSuccess && (
                 <Formik
                     initialValues={{ email: '' }}
                     validationSchema={ForgotPasswordSchema}
@@ -81,7 +80,7 @@ const ForgotPassword = () => {
                                 fullWidth
                                 variant="contained"
                                 color="primary"
-                                disabled={isSubmitting}
+                                disabled={isSubmitting || isPending}
                                 sx={{
 
                                     color: "text.primary",
@@ -93,7 +92,7 @@ const ForgotPassword = () => {
 
                                 }}
                             >
-                                Envoyer le lien
+                                {isPending ? "Envoi..." : "Envoyer le lien"}
                             </Button>
 
                         </Form>
@@ -102,7 +101,10 @@ const ForgotPassword = () => {
             )}
 
             <Typography variant="body2" sx={{ mt: 2 }}>
-                <Link href="/connexion">Retour à la connexion</Link>
+                {/* RouterLink pour ne pas perdre le cache de l'app */}
+                <Button component={RouterLink} to="/connexion" sx={{ textTransform: 'none' }}>
+                    Retour à la connexion
+                </Button>
             </Typography>
         </Box>
     );
