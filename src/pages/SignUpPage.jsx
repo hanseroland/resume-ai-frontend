@@ -25,42 +25,29 @@ const SignupSchema = Yup.object().shape({
 const SignupPage = () => {
 
   const navigate = useNavigate();
-  const { isAuthenticated, loading, currentUser } = useAuth();
-  const [statusMessage, setStatusMessage] = useState(null);
-  // eslint-disable-next-line 
-  const [isSubmittingForm, setIsSubmittingForm] = useState(false);
-
-  const handleRegister = useCallback(async (values) => {
-    setIsSubmittingForm(true);
-    setStatusMessage(null);
-
-    try {
-
-      const response = await RegisterUser(values);
-
-      if (response.success) {
-        setStatusMessage({ type: 'success', text: response.message });
-        // l'utilisateur devra se connecter après l'inscription.
-        navigate('/');
-      } else {
-        // si la simulation échoue par rejet. Le catch s'en chargera.
-        setStatusMessage({ type: 'error', text: response.message || "Échec de l'inscription." });
-      }
-    } catch (error) {
-      console.error("Erreur lors de l'inscription :", error);
-      setStatusMessage({ type: 'error', text: error.message || "Une erreur inattendue est survenue lors de l'inscription." });
-    } finally {
-      setIsSubmittingForm(false);
+  const { isAuthenticated, loading } = useAuth();
+  
+  // Mutation React Query pour gérer l'inscription
+  const { mutate, isPending, error, isSuccess, data } = useMutation({
+    mutationFn: RegisterUser,
+    onSuccess: () => {
+      // Optionnel : rediriger après un petit délai
+      setTimeout(() => navigate('/connexion'), 3000);
     }
-  }, [navigate]);
-
+  });
 
   useEffect(() => {
     if (!loading && isAuthenticated) {
       navigate('/');
     }
-  }, [loading, isAuthenticated, currentUser, navigate]);
+  }, [loading, isAuthenticated, navigate]);
 
+
+  const handleRegister = (values) => {
+    // On n'envoie pas confirmPassword au backend
+    const { confirmPassword, ...userData } = values;
+    mutate(userData);
+  };
 
   if (loading) {
     return (
@@ -95,13 +82,23 @@ const SignupPage = () => {
       <Typography variant="h4" component="h1" gutterBottom>
         Inscription
       </Typography>
-      {/* Affichage des messages de statut */}
-      {statusMessage && (
-        <Alert severity={statusMessage.type} sx={{ mb: 2 }}>
-          <AlertTitle>{statusMessage.type === 'success' ? 'Succès' : 'Erreur'}</AlertTitle>
-          {statusMessage.text}
+
+      {/* Message de succès */}
+      {isSuccess && (
+        <Alert severity="success" sx={{ mb: 2 }}>
+          <AlertTitle>Succès</AlertTitle>
+          {data?.message || "Compte créé avec succès ! Redirection..."}
         </Alert>
       )}
+
+      {/* Message d'erreur */}
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          <AlertTitle>Erreur</AlertTitle>
+          {error.message}
+        </Alert>
+      )}
+
       <Formik
         initialValues={{
           name: "",
@@ -112,7 +109,7 @@ const SignupPage = () => {
         validationSchema={SignupSchema}
         onSubmit={handleRegister}
       >
-        {({ errors, touched, isSubmitting }) => (
+        {({ errors, touched }) => (
           <Form>
             <Box mb={2}>
               <Field
@@ -162,7 +159,7 @@ const SignupPage = () => {
               fullWidth
               variant="contained"
               color="primary"
-              disabled={isSubmitting}
+              disabled={isPending || isSuccess}
               sx={{
                 fontWeight: "bold",
                 padding: { xs: "4px 8px", md: "4px 8px", sm: "4px 8px" },
@@ -172,27 +169,9 @@ const SignupPage = () => {
 
               }}
             >
-              Créer un compte
+              {isPending ? <CircularProgress size={24} color="inherit" /> : "Créer un compte"}
             </Button>
-            <Typography variant="body2" sx={{ mb: 1 }}>
-              ou
-            </Typography>
-            <Button
-              fullWidth
-              variant="outlined"
-              startIcon={<GoogleIcon />}
-              sx={{ textTransform: "none", mb: 1 }}
-            >
-              S'inscrire avec Google
-            </Button>
-            <Button
-              fullWidth
-              variant="outlined"
-              startIcon={<FacebookIcon />}
-              sx={{ textTransform: "none" }}
-            >
-              S'inscrire avec Facebook
-            </Button>
+           
             <Typography variant="body2" sx={{ mt: 2 }}>
               Vous avez déjà un compte ?{" "}
               <a href="/#/connexion" style={{ color: "blue", textDecoration: "none" }}>
