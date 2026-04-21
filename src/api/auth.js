@@ -1,37 +1,33 @@
-import { axiosInstance } from ".";
+import { apiClient } from "./fetchApi";
 
 // Créer un nouvel utilisateur
-export const RegisterUser = async (userData) => {
-    const response = await axiosInstance("post", '/auth/register', userData);
-    return response;
-}
+export const RegisterUser = (userData) => 
+    apiClient('/auth/register', {method:'POST', body:userData});
+    
 
 // Se connecter avec un utilisateur
-export const LoginUser = async (loginData) => {
-    const response = await axiosInstance("post", '/auth/login', loginData);
-    return response;
-}
+export const LoginUser =  (loginData) => 
+     apiClient('/auth/login', {method:'POST', body:loginData});
+
 
 // Activer le compte utilisateur
-export const activateUserAccount = async (token) => {
-    const response = await axiosInstance("get", `/auth/activate/${token}`);
-    return response;
-}
+export const activateUserAccount = async (token) =>  apiClient(`/auth/activate/${token}`);
+   
 
 // mot de passe oublié
-export const ForgotPasswordRequest = async (userData) => {
-    const response = await axiosInstance("post", '/auth/forgot-password', userData);
-    return response;
-}
+export const ForgotPasswordRequest =  (userData) => 
+      apiClient('/auth/forgot-password', {method:'POST', body:userData});
+  
 
 //Reset mot de passe oublié 
-export const ResetUserPassword = async (token, userData) => {
-    const response = await axiosInstance("put", `/auth/reset-password/${token}`, userData);
-    return response;
-}
+export const ResetUserPassword = (token, userData) => 
+       apiClient(`/auth/reset-password/${token}`, {method:'PUT', body:userData});
+ 
 
 // Se déconnecter 
-export const LogoutUser = async (loginData) => {
-    const response = await axiosInstance("post", '/auth/logout');
-    return response;
-}
+export const LogoutUser = () =>  apiClient('/auth/logout', {method:'POST'});
+  
+
+// refresh token
+export const refreshToken = () => 
+    apiClient('/auth/refresh-token', { method: 'POST' });
