@@ -16,40 +16,31 @@ const LoginSchema = Yup.object().shape({
 const SignInPage = () => {
 
   const navigate = useNavigate();
-  const { login, isAuthenticated, currentUser, loading } = useAuth();
-  const [loginError, setLoginError] = useState(null);
-  // eslint-disable-next-line 
-  const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const { login, isAuthenticated, loading, loginError } = useAuth();
+ 
 
-
-
-  const handleSignin = useCallback(async (values) => {
-    setIsAuthenticating(true);
-    setLoginError(null);
-
-    try {
-      const userData = await login(values); // Attend la réponse de la fonction login
-      if (userData) { // Si la connexion a réussi
-        navigate('/');
-      } else {
-        // Gérer le cas où la fonction login ne renvoie pas d'erreur mais ne renvoie pas non plus de données
-        setLoginError("Échec de la connexion.");
-      }
-    } catch (error) {
-      setLoginError(error.message || "Échec de la connexion");
-    } finally {
-      setIsAuthenticating(false);
-    }
-  }, [login, navigate]);
-
-
-  // useEffect pour rediriger si déjà connecté (le contexte gère l'état d'authentification)
+  // Redirection automatique si déjà connecté
   useEffect(() => {
     if (!loading && isAuthenticated) {
-      // Si déjà authentifié, redirige vers le tableau de bord
-      navigate('/');
+      navigate('/'); // vers le tableau de bord
     }
-  }, [loading, isAuthenticated, currentUser, navigate]);
+  }, [loading, isAuthenticated, navigate]);
+
+  const handleSignin = async (values,{setSubmitting}) => {
+    try {
+      // login est maintenant la fonction mutateAsync du contexte
+      await login(values);
+     // La redirection est gérée dans le onSuccess de la mutation dans le contexte
+    } catch (error) {
+      // L'erreur est déjà capturée par React Query et exposée via loginError
+      console.error("Erreur de soumission:", error.message);
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+
+
 
 
   // Afficher un spinner si le contexte est en cours de chargement initial
@@ -57,7 +48,7 @@ const SignInPage = () => {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
         <CircularProgress size={60} />
-        <Typography variant="h6" sx={{ ml: 2 }}>Vérification de la session...</Typography>
+        <Typography variant="h6" sx={{ ml: 2 }}>Vérification de la session cela peut prendre 30s...</Typography>
       </Box>
     );
   }
@@ -88,15 +79,12 @@ const SignInPage = () => {
       {/* Affichage des messages d'erreur */}
       {loginError && (
         <Alert severity="error" sx={{ mb: 2 }}>
-          {loginError}
+          {loginError.message}
         </Alert>
       )}
 
       <Formik
-        initialValues={{
-          email: "",
-          password: "",
-        }}
+        initialValues={{ email: "",password: ""}}
         validationSchema={LoginSchema}
         onSubmit={handleSignin}
       >
@@ -140,7 +128,7 @@ const SignInPage = () => {
 
               }}
             >
-              Se connecter
+              {isSubmitting ? "Connexion..." : "Se connecter"}
             </Button>
             <Typography variant="body2" sx={{ mb: 1, mt: 2 }}>
               ou
@@ -157,28 +145,6 @@ const SignInPage = () => {
                 Réinitialisez-le
               </a>
             </Typography>
-            {/* <Button
-              fullWidth
-              variant="outlined"
-              startIcon={<GoogleIcon />}
-              sx={{ textTransform: "none", mb: 1 }}
-            >
-              Connexion avec Google
-            </Button>
-            <Button
-              fullWidth
-              variant="outlined"
-              startIcon={<FacebookIcon />}
-              sx={{ textTransform: "none" }}
-            >
-              Connexion avec Facebook
-            </Button>
-            <Typography variant="body2" sx={{ mt: 2 }}>
-              Vous n'avez pas de compte ?{" "}
-              <a href="/#/inscription" style={{ color: "blue", textDecoration: "none" }}>
-                Inscrivez-vous
-              </a>
-            </Typography>*/}
           </Form>
         )}
       </Formik>
