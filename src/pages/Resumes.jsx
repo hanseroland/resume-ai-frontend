@@ -10,7 +10,7 @@ function Resumes() {
   const { currentUser } = useAuth();
   
   // On utilise notre nouveau hook
-  const { resumes, isLoading, removeResume, error } = useResumes(currentUser?._id);
+  const { resumes, isLoading, removeResume,isDeleting, error } = useResumes(currentUser?._id);
 
   // Pour la notification de succès (optionnel, on peut aussi l'automatiser)
   const [resumeCreated, setResumeCreated] = React.useState(false);
@@ -56,7 +56,12 @@ function Resumes() {
             {resumes && resumes.length > 0 ? (
               resumes.map((resume) => (
                 <Grid key={resume._id} size={{ lg: 3, md: 4, sm: 6, xs: 12 }}>
-                  <ResumeCard resume={resume} removeResume={handleRemove} />
+                  <ResumeCard 
+                    resume={resume} 
+                    removeResume={handleRemove}
+                    isLoading={isDeleting}
+                    
+                    />
                 </Grid>
               ))
             ) : (

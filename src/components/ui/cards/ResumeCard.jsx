@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Card, CardHeader, CardContent, Typography, IconButton, Box, Menu, MenuItem, ListItemIcon } from '@mui/material';
+import { Card, CardHeader, CardContent, Typography, IconButton, Box, Menu, MenuItem, ListItemIcon, CircularProgress } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { Delete, Share, Edit, MoreVertOutlined } from '@mui/icons-material';
 import ConfirmDialog from '../dialogs/ConfirmDialog';
 
-export default function ResumeCard({ resume, removeResume }) {
+export default function ResumeCard({ resume, removeResume,isLoading }) {
 
   const [openDialog, setOpenDialog] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -103,11 +103,13 @@ export default function ResumeCard({ resume, removeResume }) {
                 </Link>
               </MenuItem>
 
-              <MenuItem onClick={handleOpenDialog}>
+              <MenuItem onClick={handleOpenDialog} disabled={isLoading}>
                 <ListItemIcon>
-                  <Delete color="error" fontSize="small" />
+                  {isLoading ? <CircularProgress size={20} /> : <Delete color="error" fontSize="small" />}
                 </ListItemIcon>
-                <Typography variant="inherit">Delete</Typography>
+                <Typography variant="inherit">
+                  {isLoading ? 'Suppression...' : 'Delete'}
+                </Typography>
               </MenuItem>
 
               <MenuItem>
