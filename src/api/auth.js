@@ -1,5 +1,5 @@
 import { apiClient } from "./fetchApi";
-
+ 
 // Créer un nouvel utilisateur
 export const RegisterUser = (userData) => 
     apiClient('/auth/register', {method:'POST', body:userData});
