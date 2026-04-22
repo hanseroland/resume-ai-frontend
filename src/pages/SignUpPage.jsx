@@ -86,7 +86,7 @@ const SignupPage = () => {
       {isSuccess && (
         <Alert severity="success" sx={{ mb: 2 }}>
           <AlertTitle>Succès</AlertTitle>
-          {data?.message || "Compte créé avec succès ! Redirection..."}
+          {data?.message || "Vous avez reçu un mail d'activation, veuillez le consulter ! Redirection..."}
         </Alert>
       )}
 

@@ -1,47 +1,74 @@
 // src/api/index.js
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+// src/api/index.js
+
+let refreshPromise = null; // Singleton pour éviter les refreshs parallèles
+
+const attemptRefresh = () => {
+    if (!refreshPromise) {
+        refreshPromise = fetch(`${API_BASE_URL}/api/v1/auth/refresh-token`, {
+            method: 'POST',
+            credentials: 'include',
+        }).finally(() => {
+            refreshPromise = null; // Réinitialisation après succès ou échec
+        });
+    }
+    return refreshPromise;
+};
+
+const PUBLIC_ROUTES = [
+    '/auth/login',
+    '/auth/register',
+    '/auth/activate',
+    '/auth/forgot-password',
+    '/auth/reset-password',
+];
 
 export const apiClient = async (endpoint, { method = 'GET', body = null, isRetry = false } = {}) => {
     const options = {
         method,
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include', // Pour les cookies HttpOnly
+        credentials: 'include',
     };
 
-
-    if (body) options.body = JSON.stringify(body);
+    // Correction : null check strict au lieu de falsiness
+    if (body !== null) options.body = JSON.stringify(body);
 
     const response = await fetch(`${API_BASE_URL}/api/v1${endpoint}`, options);
 
-    // --- LOGIQUE DE REFRESH TOKEN ---
-    // Si on reçoit une 401 et que ce n'est pas déjà une tentative de retry ou un login
-    if (response.status === 401 && !isRetry && endpoint !== '/auth/login') {
+    const isPublicRoute = PUBLIC_ROUTES.some(route => endpoint.startsWith(route));
+
+    // Logique de refresh token
+    if (response.status === 401 && !isRetry && !isPublicRoute) {
         try {
-            // 1. On appelle la route de rafraîchissement
-            const refreshRes = await fetch(`${API_BASE_URL}/api/v1/auth/refresh-token`, {
-                method: 'POST',
-                credentials: 'include',
-            });
+            const refreshRes = await attemptRefresh();
 
             if (refreshRes.ok) {
-                // 2. Si le rafraîchissement réussit, on rejoue la requête initiale
-                // On passe isRetry: true pour éviter une boucle infinie
+                // Retry de la requête originale après refresh réussi
                 return apiClient(endpoint, { method, body, isRetry: true });
             }
-        } catch (error) {
-            console.error("Erreur lors du silent refresh", error);
+        } catch (err) {
+            console.error('Erreur critique lors du refresh :', err);
         }
-        
-        // 3. Si le refresh échoue (ex: Refresh Token expiré), on laisse l'erreur 401 passer
-        // React Query ou le AuthContext redirigera vers /connexion
+
+        // Refresh échoué → on notifie l'app et on throw immédiatement
+        // sans tenter de lire le body de la réponse 401 originale
+        window.dispatchEvent(new Event('auth:logout'));
+
+        const error = new Error('Session expirée, veuillez vous reconnecter.');
+        error.status = 401;
+        error.response = { data: {} };
+        throw error;
     }
-    
-    // On  parse le JSON, mais on gère le cas où la réponse est vide (ex: logout)
+
+    // Lecture sécurisée du body
     const data = await response.json().catch(() => ({}));
 
     if (!response.ok) {
-        // React Query détecte l'échec
-        throw new Error(data.message || "Une erreur est survenue");
+        const error = new Error(data.message || 'Une erreur est survenue');
+        error.status = response.status;
+        error.response = { data };
+        throw error;
     }
 
     return data;

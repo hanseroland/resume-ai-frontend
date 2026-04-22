@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
     Box,
@@ -10,21 +11,39 @@ import {
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import { activateUserAccount } from "../api/auth";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 
 const ActivateAccount = () => {
 
     const { token } = useParams();
+    const [success, setSuccess] = useState(false)
+    //console.log("Token =>",token)
     const navigate = useNavigate();
+    const hasAttempted = useRef(false); // Pour éviter le double appel StrictMode
 
-    // On utilise useQuery car l'action est automatique au montage
-    const { isLoading, isSuccess, isError, error, data } = useQuery({
-        queryKey: ['activateAccount', token],
-        queryFn: () => activateUserAccount(token),
-        enabled: !!token, // Ne s'exécute que si le token existe
-        retry: false,     // On ne veut pas réessayer si le lien est mort
-        staleTime: 0,     // L'activation est une action unique
+
+
+    const { mutate, isPending, isSuccess, isError, error, data } = useMutation({
+        mutationFn: () => activateUserAccount(token),
+        onSuccess: (data) => {
+            console.log("✅ Mutation réussie côté UI !", data);
+            setSuccess(true)
+        },
+        onError: (err) => {
+            console.error("❌ Mutation échouée côté UI !", err);
+        },
+        onSettled: () => {
+            console.log("🏁 Mutation terminée (succès ou erreur)");
+        }
     });
+
+    useEffect(() => {
+        // On ne lance l'activation que si on a un token et qu'on ne l'a pas déjà fait
+        if (token && !hasAttempted.current) {
+            hasAttempted.current = true;
+            mutate();
+        }
+    }, [token, mutate]);
 
 
     return (
@@ -48,26 +67,10 @@ const ActivateAccount = () => {
                 }}
             >
                 <CardContent>
-
-                    {/* ÉTAT : CHARGEMENT */}
-                    {isLoading && (
+                    {/* ÉTAT : SUCCÈS (Priorité maximale) */}
+                    {success ? (
                         <>
-                            <CircularProgress sx={{ mb: 2 }} />
-                            <Typography variant="h6">
-                                Activation de votre compte...
-                            </Typography>
-                        </>
-                    )}
-
-                    {/* ÉTAT : SUCCÈS */}
-                    {isSuccess && (
-                        <>
-                            <CheckCircleOutlineIcon
-                                sx={{ fontSize: 60, color: "green", mb: 2 }}
-                            />
-                            <Typography variant="h6" gutterBottom>
-                                Compte activé 🎉
-                            </Typography>
+                            <CheckCircleOutlineIcon sx={{ fontSize: 60, color: "green", mb: 2 }} />
                             <Typography variant="body1" sx={{ mb: 3 }}>
                                 {data?.message || "Votre compte est désormais actif."}
                             </Typography>
@@ -79,19 +82,12 @@ const ActivateAccount = () => {
                                 Se connecter
                             </Button>
                         </>
-                    )}
-
-                    {/* ÉTAT : ERREUR */}
-                    {(isError || !token) && (
+                    ) : isError ? (
+                        /* ÉTAT : ERREUR */
                         <>
-                            <ErrorOutlineIcon
-                                sx={{ fontSize: 60, color: "red", mb: 2 }}
-                            />
-                            <Typography variant="h6" gutterBottom>
-                                Activation impossible
-                            </Typography>
+                            <ErrorOutlineIcon sx={{ fontSize: 60, color: "red", mb: 2 }} />
                             <Typography variant="body1" sx={{ mb: 3 }}>
-                                {error?.message || "Le lien d'activation est invalide ou a expiré."}
+                                {error?.response?.data?.message || "Le lien d'activation est invalide ou a expiré."}
                             </Typography>
                             <Button
                                 variant="outlined"
@@ -101,8 +97,15 @@ const ActivateAccount = () => {
                                 Retour à l'accueil
                             </Button>
                         </>
+                    ) : (
+                        /* ÉTAT : CHARGEMENT (Par défaut) */
+                        <>
+                            <CircularProgress sx={{ mb: 2 }} />
+                            <Typography variant="h6">
+                                Activation de votre compte...
+                            </Typography>
+                        </>
                     )}
-
                 </CardContent>
             </Card>
         </Box>

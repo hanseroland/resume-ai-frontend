@@ -9,9 +9,10 @@ export const RegisterUser = (userData) =>
 export const LoginUser =  (loginData) => 
      apiClient('/auth/login', {method:'POST', body:loginData});
 
-
+ 
 // Activer le compte utilisateur
-export const activateUserAccount = async (token) =>  apiClient(`/auth/activate/${token}`);
+export const activateUserAccount = (token) =>  
+    apiClient(`/auth/activate/${token}`,{ method: 'GET' });
    
 
 // mot de passe oublié
