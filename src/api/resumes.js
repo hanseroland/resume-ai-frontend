@@ -164,3 +164,9 @@ export const UpdateLanguages =  (resumeId, values) =>
       apiClient(`/resumes/${resumeId}/languages`, { method:'PUT', body:values});
     
 
+export const UpdateResumeColor = (resumeId, themeColor) => 
+    apiClient(`/resumes/${resumeId}/color`, { 
+        method: 'PUT', 
+        body: { themeColor } // On envoie l'objet attendu par $set
+});
+
