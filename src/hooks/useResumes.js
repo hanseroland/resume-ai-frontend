@@ -1,5 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { DeleteResume, GetUserResumes } from '../api/resumes';
+import {
+     DeleteResume,
+     GetUserResumes,
+     UpdateResumeColor,
+     UpdateSummaryInfo
+} from '../api/resumes';
 
 export const useResumes = (userId) => {
     const queryClient = useQueryClient();
@@ -21,11 +26,34 @@ export const useResumes = (userId) => {
         },
     });
 
+     // 3. Mutation pour le résumé (Summary)
+    // On passe un objet { resumeId, values } à la mutation
+    const summaryMutation = useMutation({
+        mutationFn: ({ resumeId, values }) => UpdateSummaryInfo(resumeId, values),
+        onSuccess: (_, variables) => {
+            // On utilise variables.resumeId pour cibler le bon cache
+            queryClient.invalidateQueries(['resume', variables.resumeId]);
+        },
+    });
+
+    // 4. Mutation pour la couleur/thème
+    const themeMutation = useMutation({
+        mutationFn: ({ resumeId, color }) => UpdateResumeColor(resumeId, { themeColor: color }),
+        onSuccess: (_, variables) => {
+            queryClient.invalidateQueries(['resume', variables.resumeId]);
+        }
+    });
+
     return {
         resumes,
         isLoading,
         error,
         removeResume: deleteMutation.mutate,
-        isDeleting: deleteMutation.isPending
+        isDeleting: deleteMutation.isPending,
+        // On expose les mutations
+        updateSummary: summaryMutation.mutate,
+        isUpdatingSummary: summaryMutation.isPending,
+        updateTheme: themeMutation.mutate,
+        isUpdatingTheme: themeMutation.isPending,
     };
 };
