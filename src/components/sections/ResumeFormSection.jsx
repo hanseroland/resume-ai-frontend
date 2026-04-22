@@ -33,6 +33,8 @@ function ResumeFormSection({ resumeId }) {
   const [enableNext, setEnableNext] = useState(false)
   const { sections } = useFormSections();
 
+  // Sécurité si les sections ne sont pas encore chargées
+  if (!sections || sections.length === 0) return null;
 
   const activeFormName = sections[activeFormIndex - 1];
   const FormComponent = formComponents[activeFormName];
@@ -43,14 +45,17 @@ function ResumeFormSection({ resumeId }) {
       {/**Head */}
       <FormSectionHeader
         activeFormIndex={activeFormIndex}
-        setActiveFormIndex={setActiveFormIndex}
+        setActiveFormIndex={(val) => {
+            setActiveFormIndex(val);
+            setEnableNext(false); // Reset le bouton "Next" à chaque changement d'onglet
+          }}
         enableNext={enableNext}
         resumeId={resumeId}
       />
       <FormStepper activeFormIndex={activeFormIndex} />
 
       {
-        FormComponent && (
+        FormComponent ? (
           <Box
             sx={{
               maxHeight: "70vh",
@@ -59,22 +64,16 @@ function ResumeFormSection({ resumeId }) {
               p: 1,
             }}
           >
-            <FormComponent resumeId={resumeId} enableNext={(v) => setEnableNext(v)} />
+            <FormComponent 
+              resumeId={resumeId} 
+              enableNext={(v) => setEnableNext(v)} 
+              />
           </Box>
-        )
-      }
-
-      {/*sections.map((section, index) => {
-        const FormComponent = formComponents[section]; 
-        
-        return (
-          <Box key={index} sx={{ display: activeFormIndex === index + 1 ? 'block' : 'none' }}>
-            <FormComponent resumeId={resumeId} enableNext={(v) => setEnableNext(v)} />
-          </Box>
-        );
-        })*/}
-
-    </Box>
+        ) : (
+        <Box p={3} textAlign="center">Section non trouvée</Box>
+        )}
+      
+     </Box>
   )
 }
 

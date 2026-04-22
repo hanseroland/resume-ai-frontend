@@ -5,6 +5,8 @@ import { ResumeStyleContext } from '../../../context/ResumeStyleContext';
 import SectionManager from './SectionManager';
 import { useNavigate } from 'react-router-dom';
 import { useFormSections } from '../../../context/FormSectionsProvider';
+import { UpdateResumeColor } from '../../../api/resumes';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const colors = ['#000', '#4CAF50', '#FFEB3B', '#F44336', '#2196F3', '#9C27B0', '#E91E63', '#795548'];
 
@@ -18,6 +20,19 @@ const FormSectionHeader = ({ activeFormIndex, setActiveFormIndex, enableNext, re
   const navigate = useNavigate();
   const { sections } = useFormSections();
 
+  const queryClient = useQueryClient();
+
+  // 1. Mutation pour sauvegarder le thème (couleur)
+  const themeMutation = useMutation({
+    mutationFn: (newColor) => UpdateResumeColor(resumeId, { themeColor: newColor }),
+    onSuccess: (_, newColor) => {
+      // On met à jour l'aperçu local immédiatement
+      setCvColor(newColor);
+      // On invalide le cache du CV pour que la donnée soit à jour partout
+      queryClient.invalidateQueries(['resume', resumeId]);
+    }
+  })
+
 
   // Gérer le menu des couleurs
   const handleOpenColorMenu = (event) => {
@@ -26,6 +41,11 @@ const FormSectionHeader = ({ activeFormIndex, setActiveFormIndex, enableNext, re
 
   const handleCloseColorMenu = () => {
     setColorAnchorEl(null);
+  };
+
+  const handleColorSelect = (color) => {
+    themeMutation.mutate(color);
+    handleCloseColorMenu();
   };
 
 
@@ -62,10 +82,14 @@ const FormSectionHeader = ({ activeFormIndex, setActiveFormIndex, enableNext, re
             variant="outlined"
             startIcon={<Palette />}
             size="small"
-            sx={{ textTransform: 'none' }}
+           sx={{ 
+            textTransform: 'none',
+            borderColor: themeMutation.isPending ? 'secondary.main' : 'inherit' 
+           }}
             onClick={handleOpenColorMenu}
+            disabled={themeMutation.isPending}
           >
-            Couleurs
+           {themeMutation.isPending ? 'Sauvegarde...' : 'Couleurs'}
           </Button>
         </Tooltip>
         <SectionManager />
@@ -103,7 +127,7 @@ const FormSectionHeader = ({ activeFormIndex, setActiveFormIndex, enableNext, re
           {colors.map((color) => (
             <Tooltip title={color} key={color}>
               <IconButton
-                onClick={() => { setCvColor(color); handleCloseColorMenu(); }}
+                onClick={() => handleColorSelect(color)}
                 sx={{
                   width: 24,
                   height: 24,
@@ -128,48 +152,45 @@ const FormSectionHeader = ({ activeFormIndex, setActiveFormIndex, enableNext, re
       </Popover>
 
       <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', justifyContent: 'center' }}>
-        {activeFormIndex > 1 && (
-          <Tooltip title="Retour">
-            <Button
-              variant="contained"
-              startIcon={<ArrowLeft />}
-              size="small"
-              sx={{ textTransform: 'none' }}
-              onClick={() => setActiveFormIndex(activeFormIndex - 1)}
-            >
-              Retour
-            </Button>
-          </Tooltip>
+       {activeFormIndex > 1 && (
+          <Button
+            variant="outlined"
+            startIcon={<ArrowLeft />}
+            size="small"
+            onClick={() => setActiveFormIndex(activeFormIndex - 1)}
+          >
+            Retour
+          </Button>
         )}
 
 
-        <Tooltip title="Suivant">
+      
+
+        {activeFormIndex < sections.length ? (
+           <Tooltip title="Suivant">
           <Button
             variant="contained"
             endIcon={<ArrowRight />}
             size="small"
-            sx={{ textTransform: 'none' }}
             disabled={!enableNext}
             onClick={() => setActiveFormIndex(activeFormIndex + 1)}
           >
             Suivant
           </Button>
-        </Tooltip>
-
-        {activeFormIndex === sections.length && (
-          <Tooltip title="Voir le CV">
-            <Button
-              variant="contained"
-              color="success"
-              size="small"
-              sx={{ textTransform: 'none' }}
-              disabled={!enableNext}
-              onClick={() => navigate(`/my-resume/${resumeId}/view`)}
-            >
-              Voir le CV
-            </Button>
+         </Tooltip>
+        ) : (
+           <Tooltip title="Voir le CV">
+          <Button
+            variant="contained"
+            color="success"
+            size="small"
+            onClick={() => navigate(`/my-resume/${resumeId}/view`)}
+          >
+            Finaliser & Voir
+          </Button>
           </Tooltip>
         )}
+
 
       </Box>
     </Box>

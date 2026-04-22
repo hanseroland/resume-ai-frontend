@@ -29,7 +29,7 @@ function EditResume() {
     if (data?.data) {
       setResumeData(data.data);
       // Si une couleur est définie dans le CV, on l'applique
-      if (data.data.themeColor) setCvColor(data.data.themeColor);
+      setCvColor(data.data.themeColor || "#000000");
     }
   }, [data]);
 
