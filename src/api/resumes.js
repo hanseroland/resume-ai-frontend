@@ -79,34 +79,34 @@ export const DeleteResume =  (resumeId) => apiClient(`/resumes/${resumeId}`, {me
 
 // Générer du text du CV via OPENAI
 export const GenerateText =  (prompt) => 
-      apiClient('/resumes/openai-generate-text', {method:'POST', body:prompt });
+      apiClient('/resumes/openai-generate-text', {method:'POST', body:{prompt} });
     
 
 // Générer du text du CV via OPENAI
 export const GenerateThreeText =  (prompt) => 
-      apiClient('/resumes/openai-generate-three-textes', {method:'POST', body:prompt });
+      apiClient('/resumes/openai-generate-three-textes', {method:'POST', body:{prompt} });
     
 
 
 // Générer une Expérience du CV via OPENAI
 export const GenerateExperienceList =  (prompt) => 
-      apiClient('/resumes/openai-generate-experience-list', {method:'POST', body: prompt });
+      apiClient('/resumes/openai-generate-experience-list', {method:'POST', body: {prompt} });
     
 
 // Générer du text du CV via GEMINI
 export const GenerateGeminiText =  (prompt) => 
-      apiClient('/resumes/gemini-generate-text', {method:'POST', body:prompt });
+      apiClient('/resumes/gemini-generate-text', {method:'POST', body:{prompt} });
     
 
 // Générer du text du CV via GEMINI
 export const GenerateThreeGeminiText =  (prompt) => 
-      apiClient('/resumes/gemini-generate-three-textes', { method:'POST', body:prompt });
+      apiClient('/resumes/gemini-generate-three-textes', { method:'POST', body:{prompt} });
     
 
 
 // Générer une Expérience du CV via GEMINI
 export const GenerateGeminiExperienceList =  (prompt) => 
-      apiClient('/resumes/gemini-generate-experience-list', { method:'POST', body:prompt });
+      apiClient('/resumes/gemini-generate-experience-list', { method:'POST', body:{prompt} });
     
 
 
