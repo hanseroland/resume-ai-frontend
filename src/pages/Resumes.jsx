@@ -1,146 +1,74 @@
-
-import React, { useEffect, Suspense } from 'react'
-import { Alert, Box, CircularProgress, Typography } from '@mui/material'
+import React from 'react';
+import { Alert, Box, CircularProgress, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import AddResumeBtn from '../components/ui/AddResumeBtn';
-import { DeleteResume, GetUserResumes } from '../api/resumes';
 import ResumeCard from '../components/ui/cards/ResumeCard';
 import { useAuth } from '../context/authContext';
-
+import { useResumes } from '../hooks/useResumes';
 
 function Resumes() {
-
-
   const { currentUser } = useAuth();
+  
+  // On utilise notre nouveau hook
+  const { resumes, isLoading, removeResume, error } = useResumes(currentUser?._id);
 
-  const [resumeCreated, setResumeCreated] = React.useState(false)// afficher la notification de CV créé
+  // Pour la notification de succès (optionnel, on peut aussi l'automatiser)
+  const [resumeCreated, setResumeCreated] = React.useState(false);
 
-  const [userResumes, setUserResumes] = React.useState([]); // Stocke les CV de l'utilisateur
-
-  const [loading, setLoading] = React.useState(true); //  données en cours de chargement
-
-
-  const fetchResumes = async () => {
-    try {
-
-      const response = await GetUserResumes(currentUser._id);
-      if (response.success) {
-        setUserResumes(response.data || []); // Met à jour les CV
-      }
-
-    } catch (err) {
-      console.error('Erreur lors de la récupération des CV :', err);
-    } finally {
-      setLoading(false); // Indique que le chargement est terminé
+  const handleRemove = (id) => {
+    if (window.confirm("Voulez-vous vraiment supprimer ce CV ?")) {
+      removeResume(id);
     }
   };
 
-  // useEffect pour récupérer les CV au montage du composant
-  useEffect(() => {
-    if (currentUser && currentUser._id) {
-      fetchResumes();
-    } else {
-      setLoading(false);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resumeCreated, currentUser]); // Relance la récupération des CV lorsqu'un nouveau CV est créé
-
-
-  const removeResume = async (resumeId) => {
-
-    const response = await DeleteResume(resumeId);
-    if (response.success) {
-      alert("CV supprimé avec succès");
-      fetchResumes();
-    }
-  }
-
-
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        p: 2,
-        minHeight: '100vh',
-        width: { lg: "100%", md: "100%", sm: "100%", xs: "100%" }
-      }}
-    >
-
-      <Box py={4}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', p: 2, minHeight: '100vh', width: "100%" }}>
+      
+      <Box py={4} textAlign="center">
         <Typography fontWeight="bold" component="h2" variant="h4"> Mes CV </Typography>
-        <Typography variant="body1">
-          Débuter la création de votre CV avec l'IA
-        </Typography>
+        <Typography variant="body1">Débuter la création de votre CV avec l'IA</Typography>
       </Box>
-      {
-        resumeCreated && (
-          <Box py={1} >
-            <Alert
-              severity="success"
-              onClose={() => { setResumeCreated(false) }}
-            >
-              CV créé
-            </Alert>
-          </Box>
 
-        )
-      }
+      {resumeCreated && (
+        <Box py={1}>
+          <Alert severity="success" onClose={() => setResumeCreated(false)}>CV créé</Alert>
+        </Box>
+      )}
 
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>{error.message}</Alert>
+      )}
 
-      <Grid py={2} container spacing={2}>
+      <Grid container spacing={2} sx={{ width: '100%', maxWidth: '1200px' }}>
         <Grid size={{ lg: 3, md: 4, sm: 4, xs: 6 }}>
-          <AddResumeBtn
-            setResumeCreated={setResumeCreated}
-            resumeCreated={resumeCreated}
+          <AddResumeBtn 
+            setResumeCreated={setResumeCreated} 
+            userId={currentUser?._id} // On passe l'ID pour que le bouton puisse invalider le cache
           />
         </Grid>
 
-        <Suspense
-          fallback={
-            <Box display="flex" justifyContent="center" py={4}>
-              <CircularProgress />
-            </Box>
-          }
-        >
-
-          {loading ? (
-            <Box display="flex" justifyContent="center" py={4}>
-              <CircularProgress />
-            </Box>
-          ) : (
-            <>
-              {
-                userResumes
-
-                  ?
-                  userResumes?.map((resume) => (
-                    <Grid key={resume._id} size={{ lg: 3, md: 4, sm: 6, xs: 12 }}>
-                      <ResumeCard
-                        resume={resume}
-                        removeResume={removeResume}
-                      />
-                    </Grid>
-                  ))
-                  :
-
-
-                  <Grid size={{ lg: 3, md: 4, sm: 6, xs: 12 }}>
-                    <Alert sx={{ height: "40px" }} severity="info"> Aucun CV </Alert>
-                  </Grid>
-
-              }
-
-            </>
-          )
-          }
-        </Suspense>
-
+        {isLoading ? (
+          <Box display="flex" justifyContent="center" width="100%" py={4}>
+            <CircularProgress />
+          </Box>
+        ) : (
+          <>
+            {resumes && resumes.length > 0 ? (
+              resumes.map((resume) => (
+                <Grid key={resume._id} size={{ lg: 3, md: 4, sm: 6, xs: 12 }}>
+                  <ResumeCard resume={resume} removeResume={handleRemove} />
+                </Grid>
+              ))
+            ) : (
+              <Grid size={{ lg: 9, md: 8, sm: 8, xs: 12 }}>
+                <Alert severity="info">Aucun CV trouvé. Commencez par en créer un !</Alert>
+              </Grid>
+            )}
+          </>
+        )}
       </Grid>
-
-    </Box >
-  )
+    </Box>
+  );
 }
 
-export default Resumes
+export default Resumes;
