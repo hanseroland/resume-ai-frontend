@@ -6,13 +6,13 @@ const data = [
     { day: 'Lun', value: 40 },
     { day: 'Mar', value: 55 },
     { day: 'Mer', value: 45 },
-    { day: 'Jeu', value: 80 },
+    { day: 'Jeu', value: 80 }, 
     { day: 'Ven', value: 50 },
     { day: 'Sam', value: 35 },
     { day: 'Dim', value: 25 },
 ];
 
-const WeeklyActivityCard = ({ weeklyData, performance }) => {
+const WeeklyActivityCard = ({ weeklyData = [], performance }) => {
     return (
         <Paper elevation={0} sx={{ p: 3, borderRadius: '28px', border: '1px solid #f1f5f9', height: '100%' }}>
             <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#1e293b' }}>
