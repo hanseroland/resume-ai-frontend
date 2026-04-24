@@ -18,10 +18,13 @@ export const AuthProvider = ({ children }) => {
     // Mutation pour le Login
     const loginMutation = useMutation({
         mutationFn: LoginUser,
-        onSuccess: (response) => {
+         onSuccess : async (response) => {
             // On met à jour le cache manuellement avec les données reçues
-            queryClient.setQueryData(['authUser'], response);
-            navigate('/dashboard');
+            queryClient.setQueryData(['authUser'], response.user || response);
+
+            await queryClient.invalidateQueries({ queryKey: ['authUser'] });
+            await queryClient.invalidateQueries();
+            navigate('/');
         }
     });
     
